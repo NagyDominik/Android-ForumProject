@@ -5,7 +5,7 @@ import android.util.Log;
 
 public class DALManagerFactory {
     private static DataAccessLayerManager mInstance;
-    private static final String TAG = "ForumProject DAL";
+    private static final String TAG = "ForumProject DALFactory";
 
     /**
      * Creates a new singleton instance of the DataAccessLayerManager class
