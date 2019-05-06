@@ -1,6 +1,6 @@
 package com.exam.forumproject.DAL;
 
-import com.exam.forumproject.be.ForumPost;
+import com.exam.forumproject.BE.ForumPost;
 
 import java.util.List;
 

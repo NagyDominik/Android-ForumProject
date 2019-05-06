@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.exam.forumproject.BE.ForumPost;
-import com.google.android.gms
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
