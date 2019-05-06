@@ -1,16 +1,15 @@
-package com.exam.forumproject.dal;
+package com.exam.forumproject.DAL;
 
 import android.content.Context;
 import android.databinding.ObservableArrayList;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.exam.forumproject.be.ForumPost;
+import com.exam.forumproject.BE.ForumPost;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class FirebaseDALManager implements DataAccessLayerManager {
     }
 
     @Override
-    public List<ForumPost> getAllForumPost() {
+    public ObservableArrayList<ForumPost> getAllForumPost() {
         db.collection("forumposts")
             .addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
@@ -48,10 +47,10 @@ public class FirebaseDALManager implements DataAccessLayerManager {
                         temp.setId(doc.getId());
                         temp.setTitle(doc.getString("title"));
                         temp.setPostDate(doc.getString("postDate"));
-                        if (doc.getData().containsKey("pictureID")){
+                        if (doc.getData().containsKey("pictureID")) {
                             temp.setPictureID(doc.getString("pictureID"));
                         }
-                        if (doc.getData().containsKey("description")){
+                        if (doc.getData().containsKey("description")) {
                             temp.setPictureID(doc.getString("description"));
                         }
                         tempList.add(temp);

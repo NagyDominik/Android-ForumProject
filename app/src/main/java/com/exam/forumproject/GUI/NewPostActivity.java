@@ -1,4 +1,4 @@
-package com.exam.forumproject.gui;
+package com.exam.forumproject.GUI;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

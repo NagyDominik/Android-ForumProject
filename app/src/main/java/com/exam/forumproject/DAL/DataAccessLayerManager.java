@@ -1,8 +1,8 @@
-package com.exam.forumproject.dal;
+package com.exam.forumproject.DAL;
 
 import android.databinding.ObservableArrayList;
 
-import com.exam.forumproject.be.ForumPost;
+import com.exam.forumproject.BE.ForumPost;
 
 public interface DataAccessLayerManager {
 

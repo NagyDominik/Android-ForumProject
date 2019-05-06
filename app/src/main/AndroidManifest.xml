@@ -9,10 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".gui.UserProfileActivity"></activity>
-        <activity android:name=".gui.NewPostActivity" />
+        <activity android:name=".GUI.UserProfileActivity"></activity>
+        <activity android:name=".GUI.NewPostActivity" />
         <activity
-            android:name=".gui.MainActivity"
+            android:name=".GUI.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
