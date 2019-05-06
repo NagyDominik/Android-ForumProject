@@ -1,4 +1,4 @@
-package com.exam.forumproject.BE;
+package com.exam.forumproject.be;
 
 public class ForumPost {
 }

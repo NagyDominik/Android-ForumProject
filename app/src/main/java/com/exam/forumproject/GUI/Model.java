@@ -1,4 +1,4 @@
-package com.exam.forumproject.GUI;
+package com.exam.forumproject.gui;
 
 public class Model {
 }

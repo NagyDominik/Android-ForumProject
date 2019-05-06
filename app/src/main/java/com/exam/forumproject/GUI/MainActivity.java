@@ -1,4 +1,4 @@
-package com.exam.forumproject.GUI;
+package com.exam.forumproject.gui;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;

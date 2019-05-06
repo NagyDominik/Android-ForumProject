@@ -1,4 +1,4 @@
-package com.exam.forumproject.DAL;
+package com.exam.forumproject.dal;
 
 import android.content.Context;
 import android.util.Log;
