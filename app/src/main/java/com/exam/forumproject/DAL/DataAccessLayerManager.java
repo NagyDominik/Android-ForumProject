@@ -1,8 +1,8 @@
 package com.exam.forumproject.DAL;
 
-import com.exam.forumproject.BE.ForumPost;
+import android.databinding.ObservableArrayList;
 
-import java.util.List;
+import com.exam.forumproject.BE.ForumPost;
 
 public interface DataAccessLayerManager {
 
@@ -19,7 +19,7 @@ public interface DataAccessLayerManager {
      *
      * @return A list of ForumPost representing the posts in the database.
      */
-    List<ForumPost> getAllForumPost();
+    ObservableArrayList<ForumPost> getAllForumPost();
 
     /**
      * Returns the forum post with matching id from the database.

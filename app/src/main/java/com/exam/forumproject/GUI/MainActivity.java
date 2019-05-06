@@ -25,15 +25,23 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView postListView;
     FloatingActionButton newPostBtn;
 
+    private Model model;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         ctx = this.getBaseContext();
 
         postListView = findViewById(R.id.recyclerView);
+
+        model = Model.getInstance(MainActivity.this);
+
 
         newPostBtn = findViewById(R.id.fab);
         newPostBtn.setOnClickListener(new View.OnClickListener() {
