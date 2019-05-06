@@ -1,26 +1,29 @@
 package com.exam.forumproject.dal;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import android.databinding.ObservableArrayList;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.exam.forumproject.be.ForumPost;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FirebaseDALManager implements DataAccessLayerManager {
     private static final String TAG = "ForumProject Firebase";
     private FirebaseFirestore db;
+    private ObservableArrayList<ForumPost> postList = new ObservableArrayList<>();
 
     FirebaseDALManager(Context context) {
         this.db = FirebaseFirestore.getInstance();
         Log.d(TAG, "Firestore initialized");
-        this.getAllForumPost();
     }
 
     @Override
@@ -30,21 +33,35 @@ public class FirebaseDALManager implements DataAccessLayerManager {
 
     @Override
     public List<ForumPost> getAllForumPost() {
-        db.collection("users")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                            }
-                        } else {
-                            Log.w(TAG, "Error getting documents.", task.getException());
-                        }
+        db.collection("forumposts")
+            .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e);
+                        return;
                     }
-                });
-        return null;
+
+                    List<ForumPost> tempList = new ArrayList<>();
+                    for (DocumentSnapshot doc : value) {
+                        ForumPost temp = new ForumPost();
+                        temp.setId(doc.getId());
+                        temp.setTitle(doc.getString("title"));
+                        temp.setPostDate(doc.getString("postDate"));
+                        if (doc.getData().containsKey("pictureID")){
+                            temp.setPictureID(doc.getString("pictureID"));
+                        }
+                        if (doc.getData().containsKey("description")){
+                            temp.setPictureID(doc.getString("description"));
+                        }
+                        tempList.add(temp);
+                    }
+                    postList.clear();
+                    postList.addAll(tempList);
+                    Log.d(TAG, "" + postList);
+                }
+            });
+        return postList;
     }
 
     @Override
