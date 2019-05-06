@@ -1,4 +1,4 @@
-package com.exam.forumproject.dal;
+package com.exam.forumproject.DAL;
 
 import com.exam.forumproject.be.ForumPost;
 

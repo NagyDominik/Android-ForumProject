@@ -1,4 +1,4 @@
-package com.exam.forumproject.be;
+package com.exam.forumproject.BE;
 
 public class ForumPost {
     private String id;

@@ -1,11 +1,11 @@
-package com.exam.forumproject.gui;
+package com.exam.forumproject.GUI;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.exam.forumproject.be.ForumPost;
-import com.exam.forumproject.dal.DALManagerFactory;
-import com.exam.forumproject.dal.DataAccessLayerManager;
+import com.exam.forumproject.BE.ForumPost;
+import com.exam.forumproject.DAL.DALManagerFactory;
+import com.exam.forumproject.DAL.DataAccessLayerManager;
 
 import java.util.ArrayList;
 import java.util.List;

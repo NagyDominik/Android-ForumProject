@@ -1,10 +1,11 @@
-package com.exam.forumproject.dal;
+package com.exam.forumproject.DAL;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.exam.forumproject.be.ForumPost;
+import com.exam.forumproject.BE.ForumPost;
+import com.google.android.gms
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;

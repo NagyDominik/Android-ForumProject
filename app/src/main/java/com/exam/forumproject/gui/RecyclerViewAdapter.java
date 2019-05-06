@@ -1,4 +1,4 @@
-package com.exam.forumproject.gui;
+package com.exam.forumproject.GUI;
 
 
 import android.content.Context;
@@ -8,8 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.R;
-import com.exam.forumproject.be.ForumPost;
 
 import java.util.List;
 
