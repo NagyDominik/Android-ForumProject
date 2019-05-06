@@ -4,7 +4,8 @@ import android.content.Context;
 import android.util.Log;
 
 public class DALManagerFactory {
-    static DataAccessLayerManager mInstance;
+    private static DataAccessLayerManager mInstance;
+    private static final String TAG = "ForumProject DAL";
 
     /**
      * Creates a new singleton instance of the DataAccessLayerManager class
@@ -13,7 +14,7 @@ public class DALManagerFactory {
      */
     public static void init(Context context) {
         mInstance = new FirebaseDALManager(context);
-        Log.d("ForumProject", "Factory initialized");
+        Log.d(TAG, "Factory initialized");
     }
 
     /**

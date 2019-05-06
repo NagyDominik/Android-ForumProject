@@ -8,7 +8,7 @@ import java.util.List;
 
 public class FirebaseDALManager implements DataAccessLayerManager {
 
-    public FirebaseDALManager(Context context) {
+    FirebaseDALManager(Context context) {
     }
 
     @Override
