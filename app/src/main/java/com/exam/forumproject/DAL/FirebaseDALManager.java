@@ -12,27 +12,37 @@ public class FirebaseDALManager implements DataAccessLayerManager {
     }
 
     @Override
-    public String create(ForumPost post) {
+    public String createForumPost(ForumPost post) {
         return null;
     }
 
     @Override
-    public List<ForumPost> getAll() {
+    public List<ForumPost> getAllForumPost() {
         return null;
     }
 
     @Override
-    public ForumPost getById(String id) {
+    public ForumPost getForumPostById(String id) {
         return null;
     }
 
     @Override
-    public void update(ForumPost post) {
+    public void updateForumPost(ForumPost post) {
 
     }
 
     @Override
-    public void delete(String id) {
+    public void deleteForumPost(String id) {
+
+    }
+
+    @Override
+    public void getUserById(String id) {
+
+    }
+
+    @Override
+    public void updateProfilePicture() {
 
     }
 }

@@ -23,7 +23,7 @@ class Model {
         if (dalManager == null) {
             dalManager = DALManagerFactory.getInstance();
         }
-        forumPostsList.addAll(dalManager.getAll());
+        forumPostsList.addAll(dalManager.getAllForumPost());
     }
 
     /**
