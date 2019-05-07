@@ -8,6 +8,8 @@ import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.DAL.DALManagerFactory;
 import com.exam.forumproject.DAL.DataAccessLayerManager;
 
+import java.util.List;
+
 class Model {
     private static Model instance;
     private static final String TAG = "ForumProject Model";
@@ -82,5 +84,8 @@ class Model {
 
     public ForumPost getForumPostById(String id) {
         return dalManager.getForumPostById(id);
+    }
+    public ObservableList<ForumPost> getAllForumPost(){
+        return this.forumPostsList;
     }
 }

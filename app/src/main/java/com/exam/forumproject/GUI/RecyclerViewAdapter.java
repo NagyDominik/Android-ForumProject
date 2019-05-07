@@ -2,24 +2,27 @@ package com.exam.forumproject.GUI;
 
 
 import android.content.Context;
+import android.databinding.ObservableList;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.R;
 
-import java.util.List;
-
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
     private static final String TAG = "RecyclerViewAdapter";
-    private Context context;
-    private List<ForumPost> forumPostList;
+    private Context mContext;
+    private ObservableList<ForumPost> forumPostList;
 
-    RecyclerViewAdapter(Context context, List<ForumPost> forumPostList) {
-        this.context = context;
+    RecyclerViewAdapter(Context context, ObservableList<ForumPost> forumPostList) {
+        this.mContext = context;
         this.forumPostList = forumPostList;
     }
 
@@ -38,7 +41,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
      */
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-
+        Log.d(TAG, "onBindViewHolder: called");
+        holder.tvDateOfPost.setText(forumPostList.get(position).getPostDate());
+        holder.tvPostTitle.setText(forumPostList.get(position).getTitle());
+        if(forumPostList.get(position).getDescription() != null){
+            holder.tvPostDescription.setText(forumPostList.get(position).getDescription());
+        }else
+        {
+            holder.tvPostDescription.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
@@ -54,7 +65,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
      *
      * @param posts New list of items
      */
-    void setItems(List<ForumPost> posts) {
+    void setItems(ObservableList<ForumPost> posts) {
         this.forumPostList = posts;
     }
 
@@ -63,8 +74,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
      */
     class ViewHolder extends RecyclerView.ViewHolder {
 
+        TextView tvDateOfPost;
+        TextView tvPostTitle;
+        TextView tvPostDescription;
+        ImageView imageView;
+        ConstraintLayout parentLayout;
+
         ViewHolder(View itemView) {
             super(itemView);
+            tvDateOfPost = itemView.findViewById(R.id.tvDateOfPost);
+            tvPostTitle = itemView.findViewById(R.id.tvPostTitle);
+            tvPostDescription = itemView.findViewById(R.id.tvPostDescription);
+            imageView = itemView.findViewById(R.id.imageView);
+            parentLayout = itemView.findViewById(R.id.parent_layout);
 
         }
     }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
+    android:id="@+id/parent_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,17 +8,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/tvPostTitle2"
-        android:layout_width="313dp"
-        android:layout_height="29dp"
-        android:layout_marginStart="56dp"
-        android:layout_marginTop="12dp"
-        android:text="Title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvPostTitle" />
-
-    <TextView
-        android:id="@+id/tvPostTitle"
+        android:id="@+id/tvDateOfPost"
         android:layout_width="313dp"
         android:layout_height="29dp"
         android:layout_marginStart="56dp"
@@ -25,6 +16,16 @@
         android:text="Date of post"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvPostTitle"
+        android:layout_width="313dp"
+        android:layout_height="29dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="12dp"
+        android:text="Title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDateOfPost" />
 
     <TextView
         android:id="@+id/tvPostDescription"

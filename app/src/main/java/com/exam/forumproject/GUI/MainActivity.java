@@ -2,19 +2,27 @@ package com.exam.forumproject.GUI;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.ObservableList;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.util.AsyncListUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.R;
+
+import java.util.Observable;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -23,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView postListView;
     FloatingActionButton newPostBtn;
     private Model model;
+    int asd = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         ctx = this.getBaseContext();
 
-        postListView = findViewById(R.id.recyclerView);
-
-        model = Model.getInstance(MainActivity.this);
+        model = Model.getInstance(ctx);
 
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -47,11 +54,14 @@ public class MainActivity extends AppCompatActivity {
             newPostBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent inten = new Intent(ctx, NewPostActivity.class);
-                    startActivity(inten);
+                    Intent intent = new Intent(ctx, NewPostActivity.class);
+                    startActivity(intent);
                 }
             });
         });
+        postListView = findViewById(R.id.recyclerView);
+        initRecyclerView();
+        //new AsyncShit().execute();
     }
 
     @Override
@@ -78,9 +88,34 @@ public class MainActivity extends AppCompatActivity {
 
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init RecyclerView.");
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        //adapter = new RecyclerViewAdapter(this, model.getAll());
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new RecyclerViewAdapter(ctx, model.getAllForumPost());
+        adapter.setItems(model.getAllForumPost());
+        postListView.setAdapter(adapter);
+        postListView.setLayoutManager(new LinearLayoutManager(ctx));
+
     }
+    /*
+    private class AsyncShit extends AsyncTask<Integer, Integer, ObservableList<ForumPost>> {
+        protected int doInBackground(Integer... forumPosts) {
+            int count = forumPosts.length;
+            int maxSize = model.getAllForumPost().size();
+            if(maxSize < count){
+                return count;
+            }
+            return maxSize ;
+        }
+        protected void onProgressUpdate(Integer... progress) {
+            Toast.makeText(ctx, "Loading" + progress, Toast.LENGTH_LONG).show();
+
+
+        }
+        protected void onPostExecute(ObservableList<ForumPost> forumPosts) {
+            Log.d(TAG, "initRecyclerView: init RecyclerView.");
+            adapter = new RecyclerViewAdapter(ctx, forumPosts);
+            adapter.setItems(model.getAllForumPost());
+            postListView.setAdapter(adapter);
+            postListView.setLayoutManager(new LinearLayoutManager(ctx));
+        }
+    }*/
+
 }
