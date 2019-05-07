@@ -20,10 +20,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     RecyclerViewAdapter adapter;
     Context ctx;
-
     RecyclerView postListView;
     FloatingActionButton newPostBtn;
-
     private Model model;
 
     @Override
@@ -45,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
 
-            newPostBtn = findViewById(R.id.fab);
+            newPostBtn = fab;
             newPostBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
