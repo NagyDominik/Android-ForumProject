@@ -52,10 +52,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     /**
      * Sets the item list of the RecyclerView
      *
-     * @param friends New list of items
+     * @param posts New list of items
      */
-    void setItems(List<ForumPost> friends) {
-        this.forumPostList = friends;
+    void setItems(List<ForumPost> posts) {
+        this.forumPostList = posts;
     }
 
     /**
