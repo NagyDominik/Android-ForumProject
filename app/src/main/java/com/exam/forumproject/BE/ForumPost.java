@@ -55,4 +55,16 @@ public class ForumPost {
     public void setPictureURL(String pictureURL) {
         this.pictureURL = pictureURL;
     }
+
+    @Override
+    public String toString() {
+        return "ForumPost{" +
+            "id='" + id + '\'' +
+            ", title='" + title + '\'' +
+            ", postDate='" + postDate + '\'' +
+            ", description='" + description + '\'' +
+            ", pictureID='" + pictureID + '\'' +
+            ", pictureURL='" + pictureURL + '\'' +
+            '}';
+    }
 }

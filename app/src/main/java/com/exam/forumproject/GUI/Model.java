@@ -1,7 +1,6 @@
 package com.exam.forumproject.GUI;
 
 import android.content.Context;
-import android.databinding.ObservableArrayList;
 import android.databinding.ObservableList;
 import android.util.Log;
 
@@ -11,10 +10,9 @@ import com.exam.forumproject.DAL.DataAccessLayerManager;
 
 class Model {
     private static Model instance;
-    private static final String TAG = "ForumProject GUI";
-
+    private static final String TAG = "ForumProject Model";
     private DataAccessLayerManager dalManager;
-    private ObservableArrayList<ForumPost> forumPostsList;
+    private ObservableList<ForumPost> forumPostsList;
 
     private Model(Context context) {
         DALManagerFactory.init(context);
@@ -22,35 +20,8 @@ class Model {
         if (dalManager == null) {
             dalManager = DALManagerFactory.getInstance();
         }
-        forumPostsList = (ObservableArrayList<ForumPost>) dalManager.getAllForumPost();
-        forumPostsList.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<ForumPost>>() {
-            @Override
-            public void onChanged(ObservableList<ForumPost> sender) {
-                forumPostsList.clear();
-                forumPostsList.addAll(sender);
-                Log.d(TAG, "" + sender);
-            }
-
-            @Override
-            public void onItemRangeChanged(ObservableList<ForumPost> sender, int positionStart, int itemCount) {
-                Log.d(TAG, "" + sender);
-            }
-
-            @Override
-            public void onItemRangeInserted(ObservableList<ForumPost> sender, int positionStart, int itemCount) {
-                Log.d(TAG, "" + sender);
-            }
-
-            @Override
-            public void onItemRangeMoved(ObservableList<ForumPost> sender, int fromPosition, int toPosition, int itemCount) {
-                Log.d(TAG, "" + sender);
-            }
-
-            @Override
-            public void onItemRangeRemoved(ObservableList<ForumPost> sender, int positionStart, int itemCount) {
-                Log.d(TAG, "" + sender);
-            }
-        });
+        forumPostsList = dalManager.getAllForumPost();
+        setUpListChangeListener();
     }
 
     /**
@@ -65,5 +36,51 @@ class Model {
             Log.d(TAG, "Model created");
         }
         return instance;
+    }
+
+    /**
+     * Sets up the OnListChangeCallback of forumPostsList
+     */
+    private void setUpListChangeListener() {
+        forumPostsList.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<ForumPost>>() {
+            @Override
+            public void onChanged(ObservableList<ForumPost> sender) {
+                forumPostsList = sender;
+                Log.d(TAG, "onChanged: " + sender);
+                Log.d(TAG, "forumPostsList: " + forumPostsList);
+            }
+
+            @Override
+            public void onItemRangeChanged(ObservableList<ForumPost> sender, int positionStart, int itemCount) {
+                forumPostsList = sender;
+                Log.d(TAG, "onItemRangeChanged: " + sender);
+                Log.d(TAG, "forumPostsList: " + forumPostsList);
+            }
+
+            @Override
+            public void onItemRangeInserted(ObservableList<ForumPost> sender, int positionStart, int itemCount) {
+                forumPostsList = sender;
+                Log.d(TAG, "onItemRangeInserted: " + sender);
+                Log.d(TAG, "forumPostsList: " + forumPostsList);
+            }
+
+            @Override
+            public void onItemRangeMoved(ObservableList<ForumPost> sender, int fromPosition, int toPosition, int itemCount) {
+                forumPostsList = sender;
+                Log.d(TAG, "onItemRangeMoved: " + sender);
+                Log.d(TAG, "forumPostsList: " + forumPostsList);
+            }
+
+            @Override
+            public void onItemRangeRemoved(ObservableList<ForumPost> sender, int positionStart, int itemCount) {
+                forumPostsList = sender;
+                Log.d(TAG, "onItemRangeRemoved: " + sender);
+                Log.d(TAG, "forumPostsList: " + forumPostsList);
+            }
+        });
+    }
+
+    public ForumPost getForumPostById(String id) {
+        return dalManager.getForumPostById(id);
     }
 }
