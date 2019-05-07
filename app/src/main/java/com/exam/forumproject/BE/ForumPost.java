@@ -6,7 +6,7 @@ public class ForumPost {
     private String postDate;
     private String description;
     private String pictureID;
-    private String pictureURL;
+    private byte[] picture;
 
     public String getId() {
         return id;
@@ -48,12 +48,12 @@ public class ForumPost {
         this.pictureID = pictureID;
     }
 
-    public String getPictureURL() {
-        return pictureURL;
+    public byte[] getPicture() {
+        return picture;
     }
 
-    public void setPictureURL(String pictureURL) {
-        this.pictureURL = pictureURL;
+    public void setPicture(byte[] picture) {
+        this.picture = picture;
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ForumPost {
             ", postDate='" + postDate + '\'' +
             ", description='" + description + '\'' +
             ", pictureID='" + pictureID + '\'' +
-            ", pictureURL='" + pictureURL + '\'' +
+            ", picture='" + picture + '\'' +
             '}';
     }
 }

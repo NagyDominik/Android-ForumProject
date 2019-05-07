@@ -9,24 +9,30 @@ import android.util.Log;
 
 import com.exam.forumproject.BE.ForumPost;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FirebaseDALManager implements DataAccessLayerManager {
     private static final String TAG = "ForumProject Firebase";
+    private final long ONE_MEGABYTE = 1024 * 1024;
     private FirebaseFirestore db;
+    private FirebaseStorage storage;
     private ObservableList<ForumPost> postList = new ObservableArrayList<>();
-    private ForumPost tempPost;
 
     FirebaseDALManager(Context context) {
         this.db = FirebaseFirestore.getInstance();
+        this.storage = FirebaseStorage.getInstance();
         Log.d(TAG, "Firestore initialized");
     }
 
@@ -48,6 +54,8 @@ public class FirebaseDALManager implements DataAccessLayerManager {
                 List<ForumPost> tempList = new ArrayList<>();
                 for (DocumentSnapshot doc : value) {
                     ForumPost temp = doc.toObject(ForumPost.class);
+                    if (temp.getPictureID() != null && !temp.getPictureID().equals("")) {
+                    }
                     temp.setId(doc.getId());
                     tempList.add(temp);
                 }
@@ -61,14 +69,15 @@ public class FirebaseDALManager implements DataAccessLayerManager {
 
     @Override
     public ForumPost getForumPostById(String id) {
-        db.collection("cities").document("SF").get()
+        final ForumPost[] ret = new ForumPost[1];
+        db.collection("forumposts").document(id).get()
             .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            tempPost = document.toObject(ForumPost.class);
+                            ret[0] = document.toObject(ForumPost.class);
                         } else {
                             Log.d(TAG, "No such document");
                         }
@@ -77,9 +86,7 @@ public class FirebaseDALManager implements DataAccessLayerManager {
                     }
                 }
             });
-        ForumPost ret = tempPost;
-        tempPost = null;
-        return ret;
+        return ret[0];
     }
 
     @Override
@@ -100,5 +107,27 @@ public class FirebaseDALManager implements DataAccessLayerManager {
     @Override
     public void updateProfilePicture() {
 
+    }
+
+    private byte[] getPictureById(String id) {
+        final List<byte[]> ret = new ArrayList<>();
+        StorageReference storageRef = storage.getReference();
+        storageRef.child("forumpost-pictures/" + id).getBytes(ONE_MEGABYTE)
+            .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    ret.add(bytes);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                throw new IllegalArgumentException("No picture has been found with id: " + id);
+            }
+        });
+        if (ret.size() != 0) {
+            return ret.get(0);
+        } else {
+            return null;
+        }
     }
 }
