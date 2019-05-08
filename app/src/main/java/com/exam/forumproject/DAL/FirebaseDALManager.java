@@ -41,7 +41,8 @@ public class FirebaseDALManager implements DataAccessLayerManager {
 
     @Override
     public String createForumPost(ForumPost post) {
-        return null;
+
+
     }
 
     @Override
@@ -94,14 +95,32 @@ public class FirebaseDALManager implements DataAccessLayerManager {
     }
 
     @Override
+    public void deleteForumPost(String id) {
+        db.collection("forumposts").document(id).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()){
+                            DocumentSnapshot document = task.getResult();
+                            if(document.exists()){
+                                Log.d(TAG, "post delete will be deleted with id:" + id);
+                                db.collection("forumposts").document(id).delete();
+                            }else {
+                                Log.d(TAG, "No such document");
+                            }
+                        }else {
+                            Log.d(TAG, "get failed with ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    @Override
     public void updateForumPost(ForumPost post) {
 
     }
 
-    @Override
-    public void deleteForumPost(String id) {
 
-    }
 
     @Override
     public void getUserById(String id) {
