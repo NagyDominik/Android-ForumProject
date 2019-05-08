@@ -105,15 +105,22 @@ class Model {
 
 
     }
+    public void deletePost(String id){
+        dalManager.deleteForumPost(id);
+    }
+
     public ObservableBoolean getIsLoading(){
         return dalManager.isLoadingProperty();
     }
+
     public ObservableBoolean getIsPictureLoading(){
         return dalManager.isLoadingProperty();
     }
+
     public ForumPost getForumPostById(String id) {
         return dalManager.getForumPostById(id);
     }
+
     public ObservableList<ForumPost> getAllForumPost(){
         return this.forumPostsList;
     }

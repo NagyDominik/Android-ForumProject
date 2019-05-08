@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private static final String TAG = "RecyclerViewAdapter";
     private Context mContext;
     private ObservableList<ForumPost> forumPostList;
+    private Model model;
 
     RecyclerViewAdapter(Context context, ObservableList<ForumPost> forumPostList) {
         this.mContext = context;
@@ -32,6 +34,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+        model = Model.getInstance(mContext);
         return new ViewHolder(view);
     }
 
@@ -43,7 +46,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Log.d(TAG, "onBindViewHolder: called");
         holder.tvDateOfPost.setText(forumPostList.get(position).getPostDate());
         holder.tvPostTitle.setText(forumPostList.get(position).getTitle());
-        viewGenerator(holder, position);
+        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                 ForumPost currentPost = forumPostList.get(position);
+                 model.deletePost(currentPost.getId());
+            }
+        });
+
+        viewGenerator(holder,position);
     }
 
     /**
@@ -96,6 +107,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         ConstraintLayout parentLayout;
         ImageButton btnLike;
         ImageButton btnShare;
+        ImageButton btnDelete;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -105,6 +117,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             parentLayout = itemView.findViewById(R.id.parent_layout);
             btnLike = itemView.findViewById(R.id.btnLike);
             btnShare = itemView.findViewById(R.id.btnShare);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }
 

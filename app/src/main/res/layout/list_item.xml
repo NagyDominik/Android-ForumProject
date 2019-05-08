@@ -59,7 +59,7 @@
         app:srcCompat="@drawable/ic_like_custom" />
 
     <ImageButton
-        android:id="@+id/btnShare"
+        android:id="@+id/btnDelete"
         android:layout_width="37dp"
         android:layout_height="29dp"
         android:layout_marginTop="16dp"
@@ -67,11 +67,11 @@
         android:background="@android:color/transparent"
         android:tint="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
-    <!--app:srcCompat="" />-->
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:srcCompat="@drawable/ic_delete_custom"/>
 
     <ImageButton
-        android:id="@+id/btnShare2"
+        android:id="@+id/btnShare"
         android:layout_width="37dp"
         android:layout_height="29dp"
         android:layout_marginStart="64dp"
