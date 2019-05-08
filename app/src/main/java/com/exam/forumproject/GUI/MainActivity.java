@@ -27,7 +27,7 @@ import java.util.Observable;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     RecyclerViewAdapter adapter;
-    Context ctx;
+    public Context ctx;
     RecyclerView postListView;
     FloatingActionButton newPostBtn;
     private Model model;
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         });
         postListView = findViewById(R.id.recyclerView);
         initRecyclerView();
-        //new AsyncShit().execute();
+
     }
 
     @Override
@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    porpe
 
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init RecyclerView.");
@@ -92,30 +93,6 @@ public class MainActivity extends AppCompatActivity {
         adapter.setItems(model.getAllForumPost());
         postListView.setAdapter(adapter);
         postListView.setLayoutManager(new LinearLayoutManager(ctx));
-
     }
-    /*
-    private class AsyncShit extends AsyncTask<Integer, Integer, ObservableList<ForumPost>> {
-        protected int doInBackground(Integer... forumPosts) {
-            int count = forumPosts.length;
-            int maxSize = model.getAllForumPost().size();
-            if(maxSize < count){
-                return count;
-            }
-            return maxSize ;
-        }
-        protected void onProgressUpdate(Integer... progress) {
-            Toast.makeText(ctx, "Loading" + progress, Toast.LENGTH_LONG).show();
-
-
-        }
-        protected void onPostExecute(ObservableList<ForumPost> forumPosts) {
-            Log.d(TAG, "initRecyclerView: init RecyclerView.");
-            adapter = new RecyclerViewAdapter(ctx, forumPosts);
-            adapter.setItems(model.getAllForumPost());
-            postListView.setAdapter(adapter);
-            postListView.setLayoutManager(new LinearLayoutManager(ctx));
-        }
-    }*/
 
 }
