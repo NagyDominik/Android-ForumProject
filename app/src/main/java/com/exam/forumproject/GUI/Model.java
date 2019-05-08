@@ -10,6 +10,8 @@ import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.DAL.DALManagerFactory;
 import com.exam.forumproject.DAL.DataAccessLayerManager;
 
+import java.util.List;
+
 class Model {
     private static Model instance;
     private static final String TAG = "ForumProject Model";
@@ -100,9 +102,19 @@ class Model {
                 Log.d(TAG, "Picture Loading: " + temp.get());
             }
         });
-    }
 
+
+    }
+    public ObservableBoolean getIsLoading(){
+        return dalManager.isLoadingProperty();
+    }
+    public ObservableBoolean getIsPictureLoading(){
+        return dalManager.isLoadingProperty();
+    }
     public ForumPost getForumPostById(String id) {
         return dalManager.getForumPostById(id);
+    }
+    public ObservableList<ForumPost> getAllForumPost(){
+        return this.forumPostsList;
     }
 }
