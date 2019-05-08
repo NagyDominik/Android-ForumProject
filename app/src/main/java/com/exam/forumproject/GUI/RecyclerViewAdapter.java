@@ -2,24 +2,30 @@ package com.exam.forumproject.GUI;
 
 
 import android.content.Context;
+import android.databinding.ObservableList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.R;
 
-import java.util.List;
-
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
     private static final String TAG = "RecyclerViewAdapter";
-    private Context context;
-    private List<ForumPost> forumPostList;
+    private Context mContext;
+    private ObservableList<ForumPost> forumPostList;
 
-    RecyclerViewAdapter(Context context, List<ForumPost> forumPostList) {
-        this.context = context;
+    RecyclerViewAdapter(Context context, ObservableList<ForumPost> forumPostList) {
+        this.mContext = context;
         this.forumPostList = forumPostList;
     }
 
@@ -38,8 +44,32 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
      */
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-
+        Log.d(TAG, "onBindViewHolder: called");
+        holder.tvDateOfPost.setText(forumPostList.get(position).getPostDate());
+        holder.tvPostTitle.setText(forumPostList.get(position).getTitle());
+        viewGenerator(holder,position);
     }
+
+    /**
+     *It creates imageview or textview depends on the type of post
+     *
+     */
+    public void viewGenerator(ViewHolder holder, int position){
+
+        if(forumPostList.get(position).getPicture() != null){
+            Bitmap bmp = BitmapFactory.decodeByteArray(forumPostList.get(position).getPicture(), 0, forumPostList.get(position).getPicture().length);
+            ImageView imageView = new ImageView(mContext);
+            imageView.setImageBitmap(bmp);
+            imageView.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            holder.constraintLayout.addView(imageView);
+        }
+        else {
+            TextView textView = new TextView(mContext);
+            textView.setText(forumPostList.get(position).getDescription());
+            holder.constraintLayout.addView(textView);
+        }
+    }
+
 
     /**
      * Returns the item count of the adapter.
@@ -54,7 +84,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
      *
      * @param posts New list of items
      */
-    void setItems(List<ForumPost> posts) {
+    void setItems(ObservableList<ForumPost> posts) {
         this.forumPostList = posts;
     }
 
@@ -63,9 +93,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
      */
     class ViewHolder extends RecyclerView.ViewHolder {
 
+        TextView tvDateOfPost;
+        TextView tvPostTitle;
+        ConstraintLayout constraintLayout;
+        ConstraintLayout parentLayout;
+        ImageButton btnLike;
+        ImageButton btnShare;
+
         ViewHolder(View itemView) {
             super(itemView);
-
+            tvDateOfPost = itemView.findViewById(R.id.tvDateOfPost);
+            tvPostTitle = itemView.findViewById(R.id.tvPostTitle);
+            constraintLayout = itemView.findViewById(R.id.constraintLayout);
+            parentLayout = itemView.findViewById(R.id.parent_layout);
+            btnLike = itemView.findViewById(R.id.btnLike);
+            btnShare = itemView.findViewById(R.id.btnShare);
         }
     }
 
