@@ -54,13 +54,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
      *It creates imageview or textview depends on the type of post
      *
      */
-    public void viewGenerator(ViewHolder holder, int position){
+    private void viewGenerator(ViewHolder holder, int position){
 
         if(forumPostList.get(position).getPicture() != null){
             Bitmap bmp = BitmapFactory.decodeByteArray(forumPostList.get(position).getPicture(), 0, forumPostList.get(position).getPicture().length);
+            Bitmap image = Bitmap.createScaledBitmap(bmp, bmp.getWidth() * 5, bmp.getHeight() * 5, true);
             ImageView imageView = new ImageView(mContext);
-            imageView.setImageBitmap(bmp);
-            imageView.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            imageView.setImageBitmap(image);
+            imageView.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            imageView.setAdjustViewBounds(true);
             holder.constraintLayout.addView(imageView);
         }
         else {
