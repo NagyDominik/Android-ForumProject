@@ -44,7 +44,7 @@ public class FirebaseDALManager implements DataAccessLayerManager {
     @Override
     public String createForumPost(ForumPost post) {
 
-
+        return null;
     }
 
     @Override
