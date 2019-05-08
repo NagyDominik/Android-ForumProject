@@ -1,6 +1,6 @@
 package com.exam.forumproject.DAL;
 
-import android.databinding.ObservableArrayList;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
 
 import com.exam.forumproject.BE.ForumPost;
@@ -55,5 +55,21 @@ public interface DataAccessLayerManager {
      * Updates the users profile picture.
      */
     void updateProfilePicture();
+
+    /**
+     * Returns an observable boolean which represents the state of the post loading.
+     *
+     * @return True if the loading is in progress,
+     * False if the loading has finished
+     */
+    ObservableBoolean isLoadingProperty();
+
+    /**
+     * Returns an observable boolean which represents the state of the post picture loading.
+     *
+     * @return True if the loading is in progress,
+     * False if the loading has finished
+     */
+    ObservableBoolean isPictureLoadingProperty();
 
 }

@@ -2,6 +2,7 @@ package com.exam.forumproject.DAL;
 
 import android.content.Context;
 import android.databinding.ObservableArrayList;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,6 +30,8 @@ public class FirebaseDALManager implements DataAccessLayerManager {
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private ObservableList<ForumPost> postList = new ObservableArrayList<>();
+    private ObservableBoolean isLoading = new ObservableBoolean();
+    private ObservableBoolean isPictureLoading = new ObservableBoolean();
 
     FirebaseDALManager(Context context) {
         this.db = FirebaseFirestore.getInstance();
@@ -51,16 +54,17 @@ public class FirebaseDALManager implements DataAccessLayerManager {
                     return;
                 }
 
+                isLoading.set(true);
                 List<ForumPost> tempList = new ArrayList<>();
                 for (DocumentSnapshot doc : value) {
                     ForumPost temp = doc.toObject(ForumPost.class);
-                    if (temp.getPictureID() != null && !temp.getPictureID().equals("")) {
-                    }
                     temp.setId(doc.getId());
                     tempList.add(temp);
                 }
                 postList.clear();
                 postList.addAll(tempList);
+                isLoading.set(false);
+                setPictures();
                 Log.d(TAG, "" + postList);
             }
         });
@@ -109,25 +113,37 @@ public class FirebaseDALManager implements DataAccessLayerManager {
 
     }
 
-    private byte[] getPictureById(String id) {
-        final List<byte[]> ret = new ArrayList<>();
+    @Override
+    public ObservableBoolean isLoadingProperty() {
+        return isLoading;
+    }
+
+    @Override
+    public ObservableBoolean isPictureLoadingProperty() {
+        return isPictureLoading;
+    }
+
+    private void setPictures() {
+        isPictureLoading.set(true);
         StorageReference storageRef = storage.getReference();
-        storageRef.child("forumpost-pictures/" + id).getBytes(ONE_MEGABYTE)
-            .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        for (ForumPost post : postList) {
+            if (post.getPictureID() != null && !post.getPictureID().equals(""))
+            storageRef.child("forumpost-pictures/" + post.getPictureID()).getBytes(ONE_MEGABYTE)
+                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        post.setPicture(bytes);
+                        Log.d(TAG, "" + postList);
+                        if (postList.lastIndexOf(post) == postList.size() - 1) {
+                            isPictureLoading.set(false);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
                 @Override
-                public void onSuccess(byte[] bytes) {
-                    ret.add(bytes);
+                public void onFailure(@NonNull Exception exception) {
+                    throw new IllegalArgumentException("No picture has been found with id: " + post.getPictureID());
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                throw new IllegalArgumentException("No picture has been found with id: " + id);
-            }
-        });
-        if (ret.size() != 0) {
-            return ret.get(0);
-        } else {
-            return null;
+            });
         }
     }
 }
