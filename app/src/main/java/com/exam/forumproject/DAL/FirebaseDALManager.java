@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.exam.forumproject.BE.ForumPost;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -17,6 +18,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -46,7 +48,7 @@ public class FirebaseDALManager implements DataAccessLayerManager {
 
     @Override
     public ObservableList<ForumPost> getAllForumPost() {
-        db.collection("forumposts").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("forumposts").orderBy("postDate", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -65,7 +67,7 @@ public class FirebaseDALManager implements DataAccessLayerManager {
                 postList.addAll(tempList);
                 isLoading.set(false);
                 setPictures();
-                Log.d(TAG, "" + postList);
+                Log.d(TAG, "Loaded posts: " + postList);
             }
         });
         return postList;
@@ -129,21 +131,18 @@ public class FirebaseDALManager implements DataAccessLayerManager {
         for (ForumPost post : postList) {
             if (post.getPictureID() != null && !post.getPictureID().equals(""))
             storageRef.child("forumpost-pictures/" + post.getPictureID()).getBytes(ONE_MEGABYTE)
-                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        post.setPicture(bytes);
-                        Log.d(TAG, "" + postList);
-                        if (postList.lastIndexOf(post) == postList.size() - 1) {
-                            isPictureLoading.set(false);
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
+                .addOnSuccessListener(bytes -> {
+                    post.setPicture(bytes);
+                    Log.d(TAG, "Picture loaded for: " + post);
+
+                }).addOnFailureListener(exception -> {
                     throw new IllegalArgumentException("No picture has been found with id: " + post.getPictureID());
-                }
-            });
+                }).continueWith(task -> {
+                    if (postList.lastIndexOf(post) == postList.size() - 1) {
+                        isPictureLoading.set(false);
+                    }
+                    return null;
+                });
         }
     }
 }
