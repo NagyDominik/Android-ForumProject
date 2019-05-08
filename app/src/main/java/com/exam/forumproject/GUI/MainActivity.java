@@ -1,7 +1,10 @@
 package com.exam.forumproject.GUI;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.Observable;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,8 +25,6 @@ import android.widget.Toast;
 import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.R;
 
-import java.util.Observable;
-
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     RecyclerViewAdapter adapter;
@@ -31,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView postListView;
     FloatingActionButton newPostBtn;
     private Model model;
-    int asd = 0;
+    private ObservableBoolean isLoading;
+    private ObservableBoolean isPictureLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
             });
         });
         postListView = findViewById(R.id.recyclerView);
-        initRecyclerView();
+        loadingContents();
 
     }
 
@@ -85,14 +87,25 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    porpe
 
-    private void initRecyclerView() {
-        Log.d(TAG, "initRecyclerView: init RecyclerView.");
-        adapter = new RecyclerViewAdapter(ctx, model.getAllForumPost());
-        adapter.setItems(model.getAllForumPost());
-        postListView.setAdapter(adapter);
-        postListView.setLayoutManager(new LinearLayoutManager(ctx));
+    private void loadingContents(){
+        model.getIsLoading().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable sender, int propertyId) {
+                ObservableBoolean temp = (ObservableBoolean) sender;
+                if(temp.get()){
+
+                }
+                else {
+                    Log.d(TAG, "initRecyclerView: init RecyclerView.");
+                    adapter = new RecyclerViewAdapter(ctx, model.getAllForumPost());
+                    adapter.setItems(model.getAllForumPost());
+                    postListView.setAdapter(adapter);
+                    postListView.setLayoutManager(new LinearLayoutManager(ctx));
+                }
+
+            }
+        });
     }
 
 }

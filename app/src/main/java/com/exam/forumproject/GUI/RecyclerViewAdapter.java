@@ -5,8 +5,6 @@ import android.content.Context;
 import android.databinding.ObservableList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -14,8 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.exam.forumproject.BE.ForumPost;
@@ -72,6 +70,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
+
     /**
      * Returns the item count of the adapter.
      */
@@ -96,9 +95,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         TextView tvDateOfPost;
         TextView tvPostTitle;
-        TextView tvPostDescription;
         ConstraintLayout constraintLayout;
         ConstraintLayout parentLayout;
+        ImageButton btnLike;
+        ImageButton btnShare;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -106,7 +106,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             tvPostTitle = itemView.findViewById(R.id.tvPostTitle);
             constraintLayout = itemView.findViewById(R.id.constraintLayout);
             parentLayout = itemView.findViewById(R.id.parent_layout);
-
+            btnLike = itemView.findViewById(R.id.btnLike);
+            btnShare = itemView.findViewById(R.id.btnShare);
         }
     }
 

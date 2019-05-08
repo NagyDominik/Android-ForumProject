@@ -102,8 +102,15 @@ class Model {
                 Log.d(TAG, "Picture Loading: " + temp.get());
             }
         });
-    }
 
+
+    }
+    public ObservableBoolean getIsLoading(){
+        return dalManager.isLoadingProperty();
+    }
+    public ObservableBoolean getIsPictureLoading(){
+        return dalManager.isLoadingProperty();
+    }
     public ForumPost getForumPostById(String id) {
         return dalManager.getForumPostById(id);
     }
