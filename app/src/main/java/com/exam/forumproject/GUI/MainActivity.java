@@ -76,10 +76,11 @@ public class MainActivity extends AppCompatActivity {
             public void onPropertyChanged(Observable sender, int propertyId) {
                 ObservableBoolean temp = (ObservableBoolean) sender;
                 if(temp.get()){
-
+                    Log.d(TAG, "Loading");
                 }
                 else {
-                    Log.d(TAG, "initRecyclerView: init RecyclerView.");
+
+                    Log.d(TAG, "init RecyclerView.");
                     adapter = new RecyclerViewAdapter(ctx, model.getAllForumPost());
                     adapter.setItems(model.getAllForumPost());
                     postListView.setAdapter(adapter);
