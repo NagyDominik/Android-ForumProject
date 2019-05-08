@@ -3,4 +3,8 @@
     <string name="action_settings">Settings</string>
     <string name="postDate">Date of post</string>
     <string name="title">Title</string>
+    <string name="post">Post</string>
+    <string name="text">Post Text</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
 </resources>
