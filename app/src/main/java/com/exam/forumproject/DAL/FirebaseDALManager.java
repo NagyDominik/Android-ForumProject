@@ -9,10 +9,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.exam.forumproject.BE.ForumPost;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -43,6 +40,7 @@ public class FirebaseDALManager implements DataAccessLayerManager {
 
     @Override
     public String createForumPost(ForumPost post) {
+
         return null;
     }
 
@@ -96,14 +94,32 @@ public class FirebaseDALManager implements DataAccessLayerManager {
     }
 
     @Override
+    public void deleteForumPost(String id) {
+        db.collection("forumposts").document(id).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()){
+                            DocumentSnapshot document = task.getResult();
+                            if(document.exists()){
+                                Log.d(TAG, "post delete will be deleted with id:" + id);
+                                db.collection("forumposts").document(id).delete();
+                            }else {
+                                Log.d(TAG, "No such document");
+                            }
+                        }else {
+                            Log.d(TAG, "get failed with ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    @Override
     public void updateForumPost(ForumPost post) {
 
     }
 
-    @Override
-    public void deleteForumPost(String id) {
 
-    }
 
     @Override
     public void getUserById(String id) {
@@ -129,20 +145,22 @@ public class FirebaseDALManager implements DataAccessLayerManager {
         isPictureLoading.set(true);
         StorageReference storageRef = storage.getReference();
         for (ForumPost post : postList) {
-            if (post.getPictureID() != null && !post.getPictureID().equals(""))
-            storageRef.child("forumpost-pictures/" + post.getPictureID()).getBytes(ONE_MEGABYTE)
-                .addOnSuccessListener(bytes -> {
-                    post.setPicture(bytes);
-                    Log.d(TAG, "Picture loaded for: " + post);
-
-                }).addOnFailureListener(exception -> {
-                    throw new IllegalArgumentException("No picture has been found with id: " + post.getPictureID());
-                }).continueWith(task -> {
-                    if (postList.lastIndexOf(post) == postList.size() - 1) {
-                        isPictureLoading.set(false);
-                    }
-                    return null;
-                });
+            if (post.getPictureID() != null && !post.getPictureID().equals("")) {
+                storageRef.child("forumpost-pictures/" + post.getPictureID()).getDownloadUrl()
+                    .addOnSuccessListener(uri -> {
+                        post.setPictureUrl(uri.toString());
+                        Log.d(TAG, "Picture loaded for: " + post);
+                    })
+                    .addOnFailureListener(error -> {
+                        throw new IllegalArgumentException("No picture has been found with id: " + post.getPictureID());
+                    })
+                    .continueWith(task -> {
+                        if (postList.lastIndexOf(post) == postList.size() - 1) {
+                            isPictureLoading.set(false);
+                        }
+                        return null;
+                    });
+            }
         }
     }
 }

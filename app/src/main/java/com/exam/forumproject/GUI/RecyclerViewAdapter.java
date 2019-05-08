@@ -1,19 +1,16 @@
 package com.exam.forumproject.GUI;
 
-
 import android.content.Context;
 import android.databinding.ObservableList;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.exam.forumproject.BE.ForumPost;
@@ -23,6 +20,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private static final String TAG = "RecyclerViewAdapter";
     private Context mContext;
     private ObservableList<ForumPost> forumPostList;
+    private Model model;
 
     RecyclerViewAdapter(Context context, ObservableList<ForumPost> forumPostList) {
         this.mContext = context;
@@ -36,6 +34,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+        model = Model.getInstance(mContext);
         return new ViewHolder(view);
     }
 
@@ -47,23 +46,32 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Log.d(TAG, "onBindViewHolder: called");
         holder.tvDateOfPost.setText(forumPostList.get(position).getPostDate());
         holder.tvPostTitle.setText(forumPostList.get(position).getTitle());
+        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                 ForumPost currentPost = forumPostList.get(position);
+                 model.deletePost(currentPost.getId());
+            }
+        });
+
         viewGenerator(holder,position);
     }
 
     /**
-     *It creates imageview or textview depends on the type of post
-     *
+     * It creates imageview or textview depends on the type of post
      */
-    public void viewGenerator(ViewHolder holder, int position){
+    private void viewGenerator(ViewHolder holder, int position) {
 
-        if(forumPostList.get(position).getPicture() != null){
-            Bitmap bmp = BitmapFactory.decodeByteArray(forumPostList.get(position).getPicture(), 0, forumPostList.get(position).getPicture().length);
+        if (forumPostList.get(position).getPictureUrl() != null) {
+            /*Bitmap bmp = BitmapFactory.decodeByteArray(forumPostList.get(position).getPicture(), 0, forumPostList.get(position).getPicture().length);
+            Bitmap image = Bitmap.createScaledBitmap(bmp, bmp.getWidth() * 5, bmp.getHeight() * 5, true);
             ImageView imageView = new ImageView(mContext);
-            imageView.setImageBitmap(bmp);
-            imageView.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            holder.constraintLayout.addView(imageView);
-        }
-        else {
+            imageView.setImageBitmap(image);
+            imageView.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            imageView.setAdjustViewBounds(true);
+            holder.constraintLayout.addView(imageView);*/
+        } else {
             TextView textView = new TextView(mContext);
             textView.setText(forumPostList.get(position).getDescription());
             holder.constraintLayout.addView(textView);
@@ -99,6 +107,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         ConstraintLayout parentLayout;
         ImageButton btnLike;
         ImageButton btnShare;
+        ImageButton btnDelete;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -108,6 +117,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             parentLayout = itemView.findViewById(R.id.parent_layout);
             btnLike = itemView.findViewById(R.id.btnLike);
             btnShare = itemView.findViewById(R.id.btnShare);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }
 
