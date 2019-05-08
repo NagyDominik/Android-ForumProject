@@ -1,10 +1,7 @@
 package com.exam.forumproject.GUI;
 
-
 import android.content.Context;
 import android.databinding.ObservableList;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.exam.forumproject.BE.ForumPost;
@@ -47,26 +43,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Log.d(TAG, "onBindViewHolder: called");
         holder.tvDateOfPost.setText(forumPostList.get(position).getPostDate());
         holder.tvPostTitle.setText(forumPostList.get(position).getTitle());
-        viewGenerator(holder,position);
+        viewGenerator(holder, position);
     }
 
     /**
-     *It creates imageview or textview depends on the type of post
-     *
+     * It creates imageview or textview depends on the type of post
      */
-    private void viewGenerator(ViewHolder holder, int position){
+    private void viewGenerator(ViewHolder holder, int position) {
 
-        if(forumPostList.get(position).getPicture() != null){
-            Bitmap bmp = BitmapFactory.decodeByteArray(forumPostList.get(position).getPicture(), 0, forumPostList.get(position).getPicture().length);
+        if (forumPostList.get(position).getPictureUrl() != null) {
+            /*Bitmap bmp = BitmapFactory.decodeByteArray(forumPostList.get(position).getPicture(), 0, forumPostList.get(position).getPicture().length);
             Bitmap image = Bitmap.createScaledBitmap(bmp, bmp.getWidth() * 5, bmp.getHeight() * 5, true);
             ImageView imageView = new ImageView(mContext);
             imageView.setImageBitmap(image);
             imageView.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imageView.setAdjustViewBounds(true);
-            holder.constraintLayout.addView(imageView);
-        }
-        else {
+            holder.constraintLayout.addView(imageView);*/
+        } else {
             TextView textView = new TextView(mContext);
             textView.setText(forumPostList.get(position).getDescription());
             holder.constraintLayout.addView(textView);

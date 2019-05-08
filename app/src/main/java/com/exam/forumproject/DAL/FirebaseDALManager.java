@@ -9,10 +9,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.exam.forumproject.BE.ForumPost;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -129,20 +126,22 @@ public class FirebaseDALManager implements DataAccessLayerManager {
         isPictureLoading.set(true);
         StorageReference storageRef = storage.getReference();
         for (ForumPost post : postList) {
-            if (post.getPictureID() != null && !post.getPictureID().equals(""))
-            storageRef.child("forumpost-pictures/" + post.getPictureID()).getBytes(ONE_MEGABYTE)
-                .addOnSuccessListener(bytes -> {
-                    post.setPicture(bytes);
-                    Log.d(TAG, "Picture loaded for: " + post);
-
-                }).addOnFailureListener(exception -> {
-                    throw new IllegalArgumentException("No picture has been found with id: " + post.getPictureID());
-                }).continueWith(task -> {
-                    if (postList.lastIndexOf(post) == postList.size() - 1) {
-                        isPictureLoading.set(false);
-                    }
-                    return null;
-                });
+            if (post.getPictureID() != null && !post.getPictureID().equals("")) {
+                storageRef.child("forumpost-pictures/" + post.getPictureID()).getDownloadUrl()
+                    .addOnSuccessListener(uri -> {
+                        post.setPictureUrl(uri.toString());
+                        Log.d(TAG, "Picture loaded for: " + post);
+                    })
+                    .addOnFailureListener(error -> {
+                        throw new IllegalArgumentException("No picture has been found with id: " + post.getPictureID());
+                    })
+                    .continueWith(task -> {
+                        if (postList.lastIndexOf(post) == postList.size() - 1) {
+                            isPictureLoading.set(false);
+                        }
+                        return null;
+                    });
+            }
         }
     }
 }
