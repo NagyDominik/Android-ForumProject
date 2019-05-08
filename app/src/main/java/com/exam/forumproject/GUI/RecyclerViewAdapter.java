@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.R;
 
@@ -68,6 +69,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private void viewGenerator(ViewHolder holder, int position){
 
         if(forumPostList.get(position).getPicture() != null){
+
+            //Glide part
+            /*ImageView imageView = new ImageView(mContext);
+            Glide.with(mContext)
+                    .asBitmap()
+                    .load(forumPostList.get(position).getPictureID())
+                    .into(imageView);
+            holder.constraintLayout.addView(imageView);*/
+
             Bitmap bmp = BitmapFactory.decodeByteArray(forumPostList.get(position).getPicture(), 0, forumPostList.get(position).getPicture().length);
             Bitmap image = Bitmap.createScaledBitmap(bmp, bmp.getWidth() * 5, bmp.getHeight() * 5, true);
             ImageView imageView = new ImageView(mContext);
