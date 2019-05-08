@@ -1,6 +1,8 @@
 package com.exam.forumproject.GUI;
 
 import android.content.Context;
+import android.databinding.Observable;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
 import android.util.Log;
 
@@ -15,6 +17,8 @@ class Model {
     private static final String TAG = "ForumProject Model";
     private DataAccessLayerManager dalManager;
     private ObservableList<ForumPost> forumPostsList;
+    private ObservableBoolean isLoading;
+    private ObservableBoolean isPictureLoading;
 
     private Model(Context context) {
         DALManagerFactory.init(context);
@@ -22,6 +26,8 @@ class Model {
         if (dalManager == null) {
             dalManager = DALManagerFactory.getInstance();
         }
+        isLoading = dalManager.isLoadingProperty();
+        isPictureLoading = dalManager.isPictureLoadingProperty();
         forumPostsList = dalManager.getAllForumPost();
         setUpListChangeListener();
     }
@@ -78,6 +84,22 @@ class Model {
                 forumPostsList = sender;
                 Log.d(TAG, "onItemRangeRemoved: " + sender);
                 Log.d(TAG, "forumPostsList: " + forumPostsList);
+            }
+        });
+
+        isLoading.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable sender, int propertyId) {
+                ObservableBoolean temp = (ObservableBoolean) sender;
+                Log.d(TAG, "Loading: " + temp.get());
+            }
+        });
+
+        isPictureLoading.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable sender, int propertyId) {
+                ObservableBoolean temp = (ObservableBoolean) sender;
+                Log.d(TAG, "Picture Loading: " + temp.get());
             }
         });
     }
