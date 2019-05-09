@@ -60,24 +60,24 @@
                 android:id="@+id/btnCamera"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/imageView"
                 android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
                 android:layout_marginStart="50dp"
-                android:layout_marginBottom="140dp"
+                android:layout_marginTop="140dp"
                 android:text="@string/camera" />
 
             <Button
                 android:id="@+id/btnGallery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/imageView"
-                android:layout_alignBottom="@+id/imageView"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="140dp"
                 android:layout_marginEnd="50dp"
-                android:layout_marginBottom="140dp"
                 android:text="@string/gallery" />
 
-            <ImageView
-                android:id="@+id/imageView"
+            <FrameLayout
+                android:id="@+id/frameLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
@@ -87,9 +87,19 @@
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
-                android:layout_marginBottom="0dp"
-                android:adjustViewBounds="true"
-                android:visibility="visible" />
+                android:layout_marginBottom="0dp">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="0dp"
+                    android:adjustViewBounds="true"
+                    android:visibility="visible" />
+            </FrameLayout>
 
         </RelativeLayout>
 

@@ -1,25 +1,23 @@
 package com.exam.forumproject.GUI;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
 import android.graphics.Bitmap;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
 import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.DAL.DALManagerFactory;
 import com.exam.forumproject.DAL.DataAccessLayerManager;
 
-import java.util.List;
-
 class Model {
     private static Model instance;
     private static final String TAG = "ForumProject Model";
+    private static final int PERMISSION_REQUEST_CODE = 0;
     private DataAccessLayerManager dalManager;
     private ObservableList<ForumPost> forumPostsList;
-    private ObservableBoolean isLoading;
-    private ObservableBoolean isPictureLoading;
 
     private Model(Context context) {
         DALManagerFactory.init(context);
@@ -27,8 +25,6 @@ class Model {
         if (dalManager == null) {
             dalManager = DALManagerFactory.getInstance();
         }
-        isLoading = dalManager.isLoadingProperty();
-        isPictureLoading = dalManager.isPictureLoadingProperty();
         forumPostsList = dalManager.getAllForumPost();
         setUpListChangeListener();
     }
@@ -87,33 +83,40 @@ class Model {
                 Log.d(TAG, "forumPostsList: " + forumPostsList);
             }
         });
-
-        isLoading.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
-            @Override
-            public void onPropertyChanged(Observable sender, int propertyId) {
-                ObservableBoolean temp = (ObservableBoolean) sender;
-                Log.d(TAG, "Loading: " + temp.get());
-            }
-        });
-
-        isPictureLoading.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
-            @Override
-            public void onPropertyChanged(Observable sender, int propertyId) {
-                ObservableBoolean temp = (ObservableBoolean) sender;
-                Log.d(TAG, "Picture Loading: " + temp.get());
-            }
-        });
     }
 
-    public void deletePost(String id){
+    /**
+     * Check if the application activity has the required permission
+     *
+     * @param activity   The application activity
+     * @param permission The permission that is being checked
+     * @return True if the permission is granted, False otherwise
+     */
+    boolean checkPermissions(AppCompatActivity activity, String permission) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            if (activity.checkSelfPermission(permission) == PackageManager.PERMISSION_DENIED) {
+                Log.d(TAG, "permission denied to action - requesting it");
+                String[] permissions = {permission};
+
+                activity.requestPermissions(permissions, PERMISSION_REQUEST_CODE);
+                return false;
+            } else {
+                Log.d(TAG, "permission to action granted!");
+                return true;
+            }
+        }
+        return true;
+    }
+
+    void deletePost(String id) {
         dalManager.deleteForumPost(id);
     }
 
-    public ObservableBoolean getIsLoading(){
+    ObservableBoolean getIsLoading() {
         return dalManager.isLoadingProperty();
     }
 
-    public ObservableBoolean getIsPictureLoading(){
+    public ObservableBoolean getIsPictureLoading() {
         return dalManager.isLoadingProperty();
     }
 
@@ -121,7 +124,7 @@ class Model {
         return dalManager.getForumPostById(id);
     }
 
-    public ObservableList<ForumPost> getAllForumPost(){
+    ObservableList<ForumPost> getAllForumPost() {
         return this.forumPostsList;
     }
 
