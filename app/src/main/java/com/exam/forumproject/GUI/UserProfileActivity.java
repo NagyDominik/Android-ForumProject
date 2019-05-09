@@ -1,15 +1,126 @@
 package com.exam.forumproject.GUI;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
+import android.widget.Button;
 
+import com.bumptech.glide.Glide;
 import com.exam.forumproject.R;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class UserProfileActivity extends AppCompatActivity {
+
+    CircleImageView profilePicture;
+    Button btnOpenGallery;
+    Button btnOpenCamera;
+    Button btnSave;
+    Model model;
+
+    private static final int GALLERY_OPEN_REQUEST_CODE = 1;
+    private static final int CAMERA_REQUEST_CODE = 2;
+    public static final String TAG = "UserProfileActivity";
+    private File cameraFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
+
+        btnOpenCamera = findViewById(R.id.btnOpenCamera);
+        btnOpenGallery = findViewById(R.id.btnOpenGallery);
+        btnSave = findViewById(R.id.btnSaveProfile);
+        model = Model.getInstance(this);
+        setUpListeners();
     }
+
+    private void setUpListeners() {
+        btnSave.setOnClickListener(v -> finish());
+        btnOpenCamera.setOnClickListener(v -> openCamera());
+        btnOpenGallery.setOnClickListener(v -> openGallery());
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == GALLERY_OPEN_REQUEST_CODE) {
+                if (data != null && data.getData() != null) {
+                    Uri pic = data.getData(); //Media URI (content://)
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    Cursor cursor = getContentResolver().query(pic, filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]); //Should be 0, because the query returns only one column
+                    String picturePath = cursor.getString(columnIndex);
+                    cursor.close();
+
+                   Glide.with(this).asBitmap().load(Uri.parse(picturePath)).into(profilePicture);
+                }
+            }
+            if (requestCode == CAMERA_REQUEST_CODE) {
+                Glide.with(this).asBitmap().load(cameraFile).into(profilePicture);
+
+            }
+        }
+    }
+
+
+    private void openGallery() {
+        if (model.checkPermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            Intent pickIntent = new Intent(Intent.ACTION_PICK);
+            pickIntent.setType("image/*");
+            String[] mimeTypes = {"image/jpeg", "image/png", "image/gif"};
+            pickIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+
+            startActivityForResult(pickIntent, GALLERY_OPEN_REQUEST_CODE);
+        }
+    }
+
+    private void openCamera() {
+        if (model.checkPermissions(this, Manifest.permission.CAMERA)) {
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                // Create the File where the photo should go
+                cameraFile = null;
+                try {
+                    cameraFile = createImageFile();
+                } catch (IOException ex) {
+                    // Error occurred while creating the File
+                    Log.i(TAG, "IOException");
+                }
+                // Continue only if the File was successfully created
+                if (cameraFile != null) {
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, "com.exam.forumproject.fileprovider", cameraFile));
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+                }
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES); //App only folder
+        return File.createTempFile(
+                imageFileName,  // prefix
+                ".jpg",   // suffix
+                storageDir      // directory
+        );
+
+    }
+
 }

@@ -131,4 +131,7 @@ class Model {
     public void createForumPost(ForumPost post, Bitmap bitmap){
         dalManager.createForumPost(post,bitmap);
     }
+    public void getUserById(String userID){
+        dalManager.getUserById(userID);
+    }
 }

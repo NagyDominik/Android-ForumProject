@@ -7,4 +7,6 @@
     <string name="text">Post Text</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
+    <string name="save">Save</string>
+    <string name="profile">Profile</string>
 </resources>

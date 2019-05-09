@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.exam.forumproject.BE.ForumPost;
+import com.exam.forumproject.BE.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.protobuf.FieldOrBuilder;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -171,8 +173,26 @@ public class FirebaseDALManager implements DataAccessLayerManager {
 
 
     @Override
-    public void getUserById(String id) {
+    public User getUserById(String userID) {
+        User user = new User();
+        this.db.collection("users").document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
 
+                    if(document.exists()){
+                        Log.d(TAG, "User have found with id:" + userID);
+                        user.setId(document.getId());
+                    }else {
+                        Log.d(TAG, "No such document" + document.getId());
+                    }
+                }else {
+                    Log.d(TAG, "Get failed with ", task.getException());
+                }
+            }
+        });
+        return user;
     }
 
     @Override
