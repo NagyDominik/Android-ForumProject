@@ -5,6 +5,7 @@ import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -20,80 +21,103 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.protobuf.FieldOrBuilder;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Observable;
+import java.util.Map;
+import java.util.TimeZone;
 
 public class FirebaseDALManager implements DataAccessLayerManager {
     private static final String TAG = "ForumProject Firebase";
-    private final long ONE_MEGABYTE = 1024 * 1024;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private ObservableList<ForumPost> postList = new ObservableArrayList<>();
     private ObservableBoolean isLoading = new ObservableBoolean();
     private ObservableBoolean isPictureLoading = new ObservableBoolean();
+    private SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private boolean firstTimeLoad = true;
 
     FirebaseDALManager(Context context) {
         this.db = FirebaseFirestore.getInstance();
         this.storage = FirebaseStorage.getInstance();
+        this.dateFormater.setTimeZone(TimeZone.getTimeZone("UTC"));
         Log.d(TAG, "Firestore initialized");
     }
 
     @Override
     public void createForumPost(ForumPost post, Bitmap bitmap) {
-
-        //fake post properties
-        //post.setDescription("TestDescription");
-        post.setTitle("TestTitle");
-
-        if (post.getDescription() == null) {
+        if (bitmap != null) {
             this.createPostWithImage(post, bitmap);
+        } else if (post.getDescription() != null && !post.getDescription().equals("")) {
+            this.createTextPost(post);
         } else {
-             this.createTextPost(post);
+            throw new IllegalArgumentException("Picture or text is missing!");
         }
     }
-    public void createPostWithImage(ForumPost post, Bitmap bitmap){
-        ForumPost postProcessed = new ForumPost();
-        postProcessed.setTitle(post.getTitle());
 
-        //Simpledateformat for formating date
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
-        Date date = new Date();
-
-        postProcessed.setPostDate(simpleDateFormat.format(date));
-
-        StorageReference storageReference = storage.getReference();
-
-
-    }
-    public ForumPost createTextPost(ForumPost post){
-        ForumPost postProcessed = new ForumPost();
-        postProcessed.setTitle(post.getTitle());
-
-        //Simpledateformat for formating date
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
-        Date date = new Date();
-
-        postProcessed.setPostDate(simpleDateFormat.format(date));
-
-        if (post.getDescription() != null) {
-            postProcessed.setDescription(post.getDescription());
+    private void createPostWithImage(ForumPost post, Bitmap bitmap) {
+        Map<String, Object> postDTO = new HashMap<>();
+        postDTO.put("title", post.getTitle());
+        postDTO.put("postDate", dateFormater.format(new Date()));
+        String picId = uploadImage(bitmap, "forum");
+        if (picId != null) {
+            postDTO.put("pictureID", picId);
         }
-
-        this.createForumDBEntry(postProcessed);
-        return postProcessed;
+        createForumDBEntry(postDTO);
     }
 
-   public ForumPost createForumDBEntry(ForumPost post){
-        db.collection("forumposts").add(post);
-        return post;
-      }
+    private void createTextPost(ForumPost post) {
+        Map<String, Object> postDTO = new HashMap<>();
+        postDTO.put("title", post.getTitle());
+        postDTO.put("postDate", dateFormater.format(new Date()));
+        if (post.getDescription() != null && !post.getDescription().equals("")) {
+            postDTO.put("description", post.getDescription());
+        }
+        createForumDBEntry(postDTO);
+    }
+
+    private void createForumDBEntry(Object post) {
+        db.collection("forumposts").add(post)
+            .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId()))
+            .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+    }
+
+    private String uploadImage(Bitmap image, String location) {
+        String path;
+        if (location.equals("forum")) {
+            path = "forumpost-pictures/";
+        } else {
+            path = "profile-pictures/";
+        }
+        String uid = this.db.collection("files").document().getId();
+        Log.d(TAG, "Generated id: " + uid);
+
+        StorageReference pictureRef = storage.getReference().child(path + uid);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+        byte[] pictureData = baos.toByteArray();
+
+        StorageMetadata pictureMeta = new StorageMetadata.Builder()
+            .setContentType("image/jpg")
+            .setCustomMetadata("originalName", "IMG_" + dateFormater.format(new Date()) + "_Android")
+            .build();
+
+        pictureRef.putBytes(pictureData, pictureMeta)
+            .addOnSuccessListener(taskSnapshot -> {
+                Log.d(TAG, "Picture uploaded with name: " + uid);
+                setPictures();
+            })
+            .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+
+        return uid;
+    }
 
     @Override
     public ObservableList<ForumPost> getAllForumPost() {
@@ -115,7 +139,11 @@ public class FirebaseDALManager implements DataAccessLayerManager {
                 postList.clear();
                 postList.addAll(tempList);
                 isLoading.set(false);
-                setPictures();
+                if (firstTimeLoad) {
+                    setPictures();
+                }
+                firstTimeLoad = false;
+
                 Log.d(TAG, "Loaded posts: " + postList);
             }
         });
@@ -147,29 +175,28 @@ public class FirebaseDALManager implements DataAccessLayerManager {
     @Override
     public void deleteForumPost(String id) {
         db.collection("forumposts").document(id).get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()){
-                            DocumentSnapshot document = task.getResult();
-                            if(document.exists()){
-                                Log.d(TAG, "post delete will be deleted with id:" + id);
-                                db.collection("forumposts").document(id).delete();
-                            }else {
-                                Log.d(TAG, "No such document");
-                            }
-                        }else {
-                            Log.d(TAG, "Get failed with ", task.getException());
+            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Log.d(TAG, "post delete will be deleted with id:" + id);
+                            db.collection("forumposts").document(id).delete();
+                        } else {
+                            Log.d(TAG, "No such document");
                         }
+                    } else {
+                        Log.d(TAG, "Get failed with ", task.getException());
                     }
-                });
+                }
+            });
     }
 
     @Override
     public void updateForumPost(ForumPost post) {
 
     }
-
 
 
     @Override
