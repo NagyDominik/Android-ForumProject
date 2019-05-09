@@ -2,8 +2,11 @@ package com.exam.forumproject.DAL;
 
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
+import android.graphics.Bitmap;
 
 import com.exam.forumproject.BE.ForumPost;
+
+import java.util.Observable;
 
 public interface DataAccessLayerManager {
 
@@ -13,7 +16,7 @@ public interface DataAccessLayerManager {
      * @param post The new post to be created.
      * @return The id of the created forum post.
      */
-    String createForumPost(ForumPost post);
+    void createForumPost(ForumPost post, Bitmap bitmap);
 
     /**
      * Returns all forum posts from the database in chronological order.

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -20,8 +21,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Observable;
 
 public class FirebaseDALManager implements DataAccessLayerManager {
     private static final String TAG = "ForumProject Firebase";
@@ -39,10 +44,54 @@ public class FirebaseDALManager implements DataAccessLayerManager {
     }
 
     @Override
-    public String createForumPost(ForumPost post) {
+    public void createForumPost(ForumPost post, Bitmap bitmap) {
 
-        return null;
+        //fake post properties
+        //post.setDescription("TestDescription");
+        post.setTitle("TestTitle");
+
+        if (post.getDescription() == null) {
+            this.createPostWithImage(post, bitmap);
+        } else {
+             this.createTextPost(post);
+        }
     }
+    public void createPostWithImage(ForumPost post, Bitmap bitmap){
+        ForumPost postProcessed = new ForumPost();
+        postProcessed.setTitle(post.getTitle());
+
+        //Simpledateformat for formating date
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
+        Date date = new Date();
+
+        postProcessed.setPostDate(simpleDateFormat.format(date));
+
+        StorageReference storageReference = storage.getReference();
+
+
+    }
+    public ForumPost createTextPost(ForumPost post){
+        ForumPost postProcessed = new ForumPost();
+        postProcessed.setTitle(post.getTitle());
+
+        //Simpledateformat for formating date
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
+        Date date = new Date();
+
+        postProcessed.setPostDate(simpleDateFormat.format(date));
+
+        if (post.getDescription() != null) {
+            postProcessed.setDescription(post.getDescription());
+        }
+
+        this.createForumDBEntry(postProcessed);
+        return postProcessed;
+    }
+
+   public ForumPost createForumDBEntry(ForumPost post){
+        db.collection("forumposts").add(post);
+        return post;
+      }
 
     @Override
     public ObservableList<ForumPost> getAllForumPost() {
@@ -108,7 +157,7 @@ public class FirebaseDALManager implements DataAccessLayerManager {
                                 Log.d(TAG, "No such document");
                             }
                         }else {
-                            Log.d(TAG, "get failed with ", task.getException());
+                            Log.d(TAG, "Get failed with ", task.getException());
                         }
                     }
                 });

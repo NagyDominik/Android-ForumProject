@@ -4,6 +4,7 @@ import android.content.Context;
 import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.exam.forumproject.BE.ForumPost;
@@ -102,9 +103,8 @@ class Model {
                 Log.d(TAG, "Picture Loading: " + temp.get());
             }
         });
-
-
     }
+
     public void deletePost(String id){
         dalManager.deleteForumPost(id);
     }
@@ -123,5 +123,9 @@ class Model {
 
     public ObservableList<ForumPost> getAllForumPost(){
         return this.forumPostsList;
+    }
+
+    public void createForumPost(ForumPost post, Bitmap bitmap){
+        dalManager.createForumPost(post,bitmap);
     }
 }
