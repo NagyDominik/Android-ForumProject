@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,6 +21,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.R;
 
 import java.io.File;
@@ -58,7 +61,9 @@ public class NewPostActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        cameraFile.delete();
+        if (cameraFile != null) {
+            cameraFile.delete();
+        }
         super.onDestroy();
     }
 
@@ -86,7 +91,7 @@ public class NewPostActivity extends AppCompatActivity {
     }
 
     private void setUpListeners() {
-        btnPost.setOnClickListener(v -> finish());
+        btnPost.setOnClickListener(v -> post());
         btnCamera.setOnClickListener(v -> openCamera());
         btnGallery.setOnClickListener(v -> openGallery());
         etText.addTextChangedListener(new TextWatcher() {
@@ -179,6 +184,17 @@ public class NewPostActivity extends AppCompatActivity {
     }
 
     private void post() {
-        cameraFile.delete(); //Important temp file cleanup!!
+        ForumPost newPost = new ForumPost();
+        Bitmap tempBitmap = null;
+        if (etTitle.getText() != null) {
+            newPost.setTitle(etTitle.getText().toString());
+        }
+        if (etText.getText() != null && !etText.getText().toString().equals("")) {
+            newPost.setDescription(etText.getText().toString());
+        } else if (imageView.getDrawable() != null) {
+            tempBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        }
+        model.createForumPost(newPost, tempBitmap);
+        finish();
     }
 }
