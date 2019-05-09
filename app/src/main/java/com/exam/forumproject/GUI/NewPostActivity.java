@@ -4,15 +4,15 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,6 +20,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.exam.forumproject.R;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class NewPostActivity extends AppCompatActivity {
 
@@ -30,6 +35,8 @@ public class NewPostActivity extends AppCompatActivity {
 
     private static final int GALLERY_OPEN_REQUEST_CODE = 1;
     private static final int CAMERA_REQUEST_CODE = 2;
+    public static final String TAG = "Forumproject NewPost";
+    private File cameraFile;
     private Model model;
 
     @Override
@@ -50,6 +57,12 @@ public class NewPostActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        cameraFile.delete();
+        super.onDestroy();
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == GALLERY_OPEN_REQUEST_CODE) {
@@ -63,15 +76,11 @@ public class NewPostActivity extends AppCompatActivity {
                     String picturePath = cursor.getString(columnIndex);
                     cursor.close();
 
-                    Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
-                    onPictureSwitch(bitmap);
+                    onPictureSwitch(Uri.parse(picturePath));
                 }
             }
             if (requestCode == CAMERA_REQUEST_CODE) {
-                if (data != null && data.getExtras() != null) {
-                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                    onPictureSwitch(bitmap);
-                }
+                onPictureSwitch(Uri.fromFile(cameraFile));
             }
         }
     }
@@ -105,13 +114,13 @@ public class NewPostActivity extends AppCompatActivity {
         });
     }
 
-    private void onPictureSwitch(Bitmap image) {
+    private void onPictureSwitch(Uri image) {
         btnGallery.setVisibility(View.GONE);
         btnCamera.setVisibility(View.GONE);
         etText.setEnabled(false);
         frameLayout.setForeground(null);
 
-        imageView.setImageBitmap(image);
+        imageView.setImageURI(image);
         imageView.setBackground(null);
         imageView.setClickable(true);
 
@@ -137,12 +146,39 @@ public class NewPostActivity extends AppCompatActivity {
 
     private void openCamera() {
         if (model.checkPermissions(this, Manifest.permission.CAMERA)) {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(intent, CAMERA_REQUEST_CODE);
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                // Create the File where the photo should go
+                cameraFile = null;
+                try {
+                    cameraFile = createImageFile();
+                } catch (IOException ex) {
+                    // Error occurred while creating the File
+                    Log.i(TAG, "IOException");
+                }
+                // Continue only if the File was successfully created
+                if (cameraFile != null) {
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, "com.exam.forumproject.fileprovider", cameraFile));
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+                }
+            }
         }
     }
 
-    private void post() {
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES); //App only folder
+        return File.createTempFile(
+            imageFileName,  // prefix
+            ".jpg",   // suffix
+            storageDir      // directory
+        );
 
+    }
+
+    private void post() {
+        cameraFile.delete(); //Important temp file cleanup!!
     }
 }
