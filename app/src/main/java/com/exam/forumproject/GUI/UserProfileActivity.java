@@ -12,7 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.exam.forumproject.R;
@@ -45,6 +47,7 @@ public class UserProfileActivity extends AppCompatActivity {
         btnOpenCamera = findViewById(R.id.btnOpenCamera);
         btnOpenGallery = findViewById(R.id.btnOpenGallery);
         btnSave = findViewById(R.id.btnSaveProfile);
+        profilePicture = findViewById(R.id.circleImageView);
         model = Model.getInstance(this);
         setUpListeners();
     }
@@ -67,15 +70,16 @@ public class UserProfileActivity extends AppCompatActivity {
                     String picturePath = cursor.getString(columnIndex);
                     cursor.close();
 
-                   Glide.with(this).asBitmap().load(Uri.parse(picturePath)).into(profilePicture);
+                    profilePicture.setImageURI(Uri.parse(picturePath));
                 }
             }
             if (requestCode == CAMERA_REQUEST_CODE) {
-                Glide.with(this).asBitmap().load(cameraFile).into(profilePicture);
+                profilePicture.setImageURI(Uri.fromFile(cameraFile));
 
             }
         }
     }
+
 
 
     private void openGallery() {

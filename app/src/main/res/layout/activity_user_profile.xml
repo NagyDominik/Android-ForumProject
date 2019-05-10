@@ -10,12 +10,14 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/circleImageView"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_marginStart="127dp"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="28dp"
         android:layout_marginEnd="124dp"
+        android:src="@drawable/image_filler"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.55"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
