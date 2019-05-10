@@ -27,6 +27,7 @@ class FirebaseForumPostManager {
     private SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private ObservableBoolean isLoading = new ObservableBoolean();
     private ObservableBoolean picRefresh = new ObservableBoolean();
+    private boolean upload = false;
     private ObservableList<ForumPost> postList;
     private FirebaseFileManager fileManager;
     private FirebaseFirestore db;
@@ -61,6 +62,7 @@ class FirebaseForumPostManager {
     }
 
     private void createForumDBEntry(Object post) {
+        upload = true;
         db.collection("forumposts").add(post)
             .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId()))
             .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
@@ -85,8 +87,10 @@ class FirebaseForumPostManager {
                 postList.clear();
                 postList.addAll(tempList);
                 isLoading.set(false);
-                picRefresh.notifyChange();
-
+                if (!upload) {
+                    picRefresh.notifyChange();
+                }
+                upload = false;
                 Log.d(TAG, "Loaded posts: " + postList);
             }
         });
