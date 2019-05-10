@@ -5,6 +5,7 @@ import android.databinding.ObservableList;
 import android.graphics.Bitmap;
 
 import com.exam.forumproject.BE.ForumPost;
+import com.exam.forumproject.BE.User;
 
 import java.util.Observable;
 
@@ -52,7 +53,7 @@ public interface DataAccessLayerManager {
      *
      * @param id
      */
-    void getUserById(String id);
+    User getUserById(String id);
 
     /**
      * Updates the users profile picture.
