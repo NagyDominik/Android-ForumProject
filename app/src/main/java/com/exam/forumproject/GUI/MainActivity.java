@@ -23,8 +23,6 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView postListView;
     FloatingActionButton newPostBtn;
     private Model model;
-    private ObservableBoolean isLoading;
-    private ObservableBoolean isPictureLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,30 +32,15 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ctx = this.getBaseContext();
-
         model = Model.getInstance(ctx);
-
         newPostBtn = findViewById(R.id.fab);
         newPostBtn.setOnClickListener(v -> {
             Intent intent = new Intent(ctx, NewPostActivity.class);
             startActivity(intent);
-                    
-                    /*
-                try {
-                    ForumPost post = new ForumPost();
-                    URL imageurl = new URL("https://i.imgur.com/kKFdbgS.jpg");
-                    Bitmap image = BitmapFactory.decodeStream(imageurl.openConnection().getInputStream());
-                    model.createForumPost(post,image);
-                } catch(IOException e) {
-                    System.out.println(e);
-                }
-                    */
-
         });
 
         postListView = findViewById(R.id.recyclerView);
         loadingContents();
-
     }
 
     @Override

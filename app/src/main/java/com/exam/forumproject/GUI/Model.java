@@ -51,28 +51,24 @@ class Model {
         forumPostsList.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<ForumPost>>() {
             @Override
             public void onChanged(ObservableList<ForumPost> sender) {
-                //forumPostsList = sender;
                 Log.d(TAG, "onChanged: " + sender);
                 Log.d(TAG, "forumPostsList: " + forumPostsList);
             }
 
             @Override
             public void onItemRangeChanged(ObservableList<ForumPost> sender, int positionStart, int itemCount) {
-                //forumPostsList = sender;
                 Log.d(TAG, "onItemRangeChanged: " + sender);
                 Log.d(TAG, "forumPostsList: " + forumPostsList);
             }
 
             @Override
             public void onItemRangeInserted(ObservableList<ForumPost> sender, int positionStart, int itemCount) {
-                //forumPostsList = sender;
                 Log.d(TAG, "onItemRangeInserted: " + sender);
                 Log.d(TAG, "forumPostsList: " + forumPostsList);
             }
 
             @Override
             public void onItemRangeMoved(ObservableList<ForumPost> sender, int fromPosition, int toPosition, int itemCount) {
-                //forumPostsList = sender;
                 Log.d(TAG, "onItemRangeMoved: " + sender);
                 Log.d(TAG, "forumPostsList: " + forumPostsList);
             }
