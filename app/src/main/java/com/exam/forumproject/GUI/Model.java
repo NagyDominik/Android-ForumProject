@@ -8,14 +8,15 @@ import android.databinding.ObservableList;
 import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
 import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.DAL.DALManagerFactory;
 import com.exam.forumproject.DAL.DataAccessLayerManager;
+import com.exam.forumproject.Utility.Utility;
 
 class Model {
     private static Model instance;
     private static final String TAG = "ForumProject Model";
-    private static final int PERMISSION_REQUEST_CODE = 0;
     private DataAccessLayerManager dalManager;
     private ObservableList<ForumPost> forumPostsList;
 
@@ -83,6 +84,14 @@ class Model {
                 Log.d(TAG, "forumPostsList: " + forumPostsList);
             }
         });
+
+        dalManager.isPictureLoadingProperty().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable sender, int propertyId) {
+                ObservableBoolean temp = (ObservableBoolean) sender;
+                Log.d(TAG, "Picture Loading: " + temp.get());
+            }
+        });
     }
 
     /**
@@ -98,7 +107,7 @@ class Model {
                 Log.d(TAG, "permission denied to action - requesting it");
                 String[] permissions = {permission};
 
-                activity.requestPermissions(permissions, PERMISSION_REQUEST_CODE);
+                activity.requestPermissions(permissions, Utility.PERMISSION_REQUEST_CODE);
                 return false;
             } else {
                 Log.d(TAG, "permission to action granted!");
@@ -116,11 +125,11 @@ class Model {
         return dalManager.isLoadingProperty();
     }
 
-    public ObservableBoolean getIsPictureLoading() {
+    ObservableBoolean getIsPictureLoading() {
         return dalManager.isLoadingProperty();
     }
 
-    public ForumPost getForumPostById(String id) {
+    ForumPost getForumPostById(String id) {
         return dalManager.getForumPostById(id);
     }
 
@@ -128,7 +137,7 @@ class Model {
         return this.forumPostsList;
     }
 
-    public void createForumPost(ForumPost post, Bitmap bitmap){
-        dalManager.createForumPost(post,bitmap);
+    void createForumPost(ForumPost post, Bitmap bitmap) {
+        dalManager.createForumPost(post, bitmap);
     }
 }
