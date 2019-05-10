@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -16,13 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.bumptech.glide.Glide;
-import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.R;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -46,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
         model = Model.getInstance(ctx);
 
         newPostBtn = findViewById(R.id.fab);
-            newPostBtn.setOnClickListener(v ->  {
-                    Intent intent = new Intent(ctx, NewPostActivity.class);
-                    startActivity(intent);
+        newPostBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(ctx, NewPostActivity.class);
+            startActivity(intent);
                     
                     /*
                 try {
@@ -61,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                     */
 
-            });
+        });
 
         postListView = findViewById(R.id.recyclerView);
         loadingContents();
@@ -91,23 +83,30 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadingContents(){
+    private void loadingContents() {
         model.getIsLoading().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {
                 ObservableBoolean temp = (ObservableBoolean) sender;
-                if(temp.get()){
+                if (temp.get()) {
                     Log.d(TAG, "Loading");
-                }
-                else {
-
+                } else {
                     Log.d(TAG, "init RecyclerView.");
                     adapter = new RecyclerViewAdapter(ctx, model.getAllForumPost());
                     adapter.setItems(model.getAllForumPost());
                     postListView.setAdapter(adapter);
                     postListView.setLayoutManager(new LinearLayoutManager(ctx));
                 }
+            }
+        });
 
+        model.getIsPictureLoading().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable sender, int propertyId) {
+                ObservableBoolean temp = (ObservableBoolean) sender;
+                if (!temp.get()) {
+                    adapter.notifyDataSetChanged();
+                }
             }
         });
     }

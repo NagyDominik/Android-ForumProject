@@ -68,7 +68,6 @@ public class FirebaseDALManager implements DataAccessLayerManager {
 
     }
 
-
     @Override
     public User getUserById(String userID) {
         User user = new User();

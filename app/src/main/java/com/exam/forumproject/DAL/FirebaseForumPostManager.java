@@ -27,7 +27,6 @@ class FirebaseForumPostManager {
     private SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private ObservableBoolean isLoading = new ObservableBoolean();
     private ObservableBoolean picRefresh = new ObservableBoolean();
-    private boolean firstTimeLoad = true;
     private ObservableList<ForumPost> postList;
     private FirebaseFileManager fileManager;
     private FirebaseFirestore db;
@@ -86,10 +85,7 @@ class FirebaseForumPostManager {
                 postList.clear();
                 postList.addAll(tempList);
                 isLoading.set(false);
-                if (firstTimeLoad) {
-                    picRefresh.notifyChange();
-                }
-                firstTimeLoad = false;
+                picRefresh.notifyChange();
 
                 Log.d(TAG, "Loaded posts: " + postList);
             }
