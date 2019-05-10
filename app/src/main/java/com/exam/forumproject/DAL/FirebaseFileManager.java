@@ -22,7 +22,7 @@ class FirebaseFileManager {
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private ObservableList<ForumPost> postList;
-    private ObservableBoolean isPictureLoading = new ObservableBoolean();
+    private ObservableBoolean isPictureLoading = new ObservableBoolean(true);
 
     FirebaseFileManager(FirebaseFirestore db, FirebaseStorage storage, ObservableList<ForumPost> postList) {
         this.db = db;
@@ -77,7 +77,7 @@ class FirebaseFileManager {
                     .continueWith(task -> {
                         if (postList.lastIndexOf(post) == postList.size() - 1) {
                             Handler handler = new Handler();
-                            handler.postDelayed(() -> isPictureLoading.set(false), 100);
+                            handler.postDelayed(() -> isPictureLoading.set(false), 300);
                         }
                         return null;
                     });

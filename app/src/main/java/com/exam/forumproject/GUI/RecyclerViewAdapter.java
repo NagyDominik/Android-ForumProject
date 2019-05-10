@@ -26,6 +26,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     RecyclerViewAdapter(Context context, ObservableList<ForumPost> forumPostList) {
         this.mContext = context;
         this.forumPostList = forumPostList;
+        this.model = Model.getInstance(mContext);
     }
 
     /**
@@ -35,7 +36,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-        model = Model.getInstance(mContext);
         return new ViewHolder(view);
     }
 
@@ -47,41 +47,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Log.d(TAG, "onBindViewHolder: called");
         holder.tvDateOfPost.setText(forumPostList.get(position).getPostDate());
         holder.tvPostTitle.setText(forumPostList.get(position).getTitle());
-        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                 ForumPost currentPost = forumPostList.get(position);
-                 model.deletePost(currentPost.getId());
-            }
+        holder.btnDelete.setOnClickListener(v -> {
+            ForumPost currentPost = forumPostList.get(position);
+            model.deletePost(currentPost.getId());
         });
-
-        viewGenerator(holder,position);
+        viewGenerator(holder, position);
     }
 
-    /**
-     * It creates imageview or textview depends on the type of post
-     */
-    private void viewGenerator(ViewHolder holder, int position) {
-
-        if (forumPostList.get(position).getPictureUrl() != null) {
-
-            ImageView imageView = new ImageView(mContext);
-            Glide.with(mContext)
-                    .asBitmap()
-                    .load(forumPostList.get(position).getPictureUrl())
-                    .into(imageView);
-            imageView.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            imageView.setAdjustViewBounds(true);
-            holder.constraintLayout.addView(imageView);
-
-        } else {
-            TextView textView = new TextView(mContext);
-            textView.setText(forumPostList.get(position).getDescription());
-            holder.constraintLayout.addView(textView);
-        }
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
     /**
      * Returns the item count of the adapter.
@@ -101,10 +82,41 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     /**
+     * It creates imageview or textview depending on the type of post
+     */
+    private void viewGenerator(ViewHolder holder, int position) {
+        if (holder.constraintLayout.getChildCount() == 0) {
+            if (forumPostList.get(position).getDescription() == null) {
+                ImageView imageView = new ImageView(mContext);
+                imageView.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                imageView.setAdjustViewBounds(true);
+                holder.constraintLayout.addView(imageView);
+                loadPictures(holder, position);
+            } else {
+                TextView textView = new TextView(mContext);
+                textView.setText(forumPostList.get(position).getDescription());
+                holder.constraintLayout.addView(textView);
+            }
+        } else {
+            if (holder.constraintLayout.getChildAt(0) instanceof ImageView) {
+                if (((ImageView) holder.constraintLayout.getChildAt(0)).getDrawable() == null)
+                    loadPictures(holder, position);
+            }
+        }
+    }
+
+    private void loadPictures(ViewHolder holder, int pos) {
+        Glide.with(mContext)
+            .asDrawable()
+            .load(forumPostList.get(pos).getPictureUrl())
+            .into((ImageView) holder.constraintLayout.getChildAt(0));
+    }
+
+    /**
      * A ViewHolder describes an item view and metadata about its place within the RecyclerView.
      */
     class ViewHolder extends RecyclerView.ViewHolder {
-
         TextView tvDateOfPost;
         TextView tvPostTitle;
         ConstraintLayout constraintLayout;

@@ -51,45 +51,32 @@ class Model {
         forumPostsList.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<ForumPost>>() {
             @Override
             public void onChanged(ObservableList<ForumPost> sender) {
-                forumPostsList = sender;
                 Log.d(TAG, "onChanged: " + sender);
                 Log.d(TAG, "forumPostsList: " + forumPostsList);
             }
 
             @Override
             public void onItemRangeChanged(ObservableList<ForumPost> sender, int positionStart, int itemCount) {
-                forumPostsList = sender;
                 Log.d(TAG, "onItemRangeChanged: " + sender);
                 Log.d(TAG, "forumPostsList: " + forumPostsList);
             }
 
             @Override
             public void onItemRangeInserted(ObservableList<ForumPost> sender, int positionStart, int itemCount) {
-                forumPostsList = sender;
                 Log.d(TAG, "onItemRangeInserted: " + sender);
                 Log.d(TAG, "forumPostsList: " + forumPostsList);
             }
 
             @Override
             public void onItemRangeMoved(ObservableList<ForumPost> sender, int fromPosition, int toPosition, int itemCount) {
-                forumPostsList = sender;
                 Log.d(TAG, "onItemRangeMoved: " + sender);
                 Log.d(TAG, "forumPostsList: " + forumPostsList);
             }
 
             @Override
             public void onItemRangeRemoved(ObservableList<ForumPost> sender, int positionStart, int itemCount) {
-                forumPostsList = sender;
                 Log.d(TAG, "onItemRangeRemoved: " + sender);
                 Log.d(TAG, "forumPostsList: " + forumPostsList);
-            }
-        });
-
-        dalManager.isPictureLoadingProperty().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
-            @Override
-            public void onPropertyChanged(Observable sender, int propertyId) {
-                ObservableBoolean temp = (ObservableBoolean) sender;
-                Log.d(TAG, "Picture Loading: " + temp.get());
             }
         });
     }
@@ -126,7 +113,7 @@ class Model {
     }
 
     ObservableBoolean getIsPictureLoading() {
-        return dalManager.isLoadingProperty();
+        return dalManager.isPictureLoadingProperty();
     }
 
     ForumPost getForumPostById(String id) {
@@ -140,6 +127,7 @@ class Model {
     void createForumPost(ForumPost post, Bitmap bitmap) {
         dalManager.createForumPost(post, bitmap);
     }
+
     public void getUserById(String userID){
         dalManager.getUserById(userID);
     }
