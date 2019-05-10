@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -16,13 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.bumptech.glide.Glide;
-import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.R;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";

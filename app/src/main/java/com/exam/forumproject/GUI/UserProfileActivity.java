@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -19,6 +21,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.exam.forumproject.R;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -59,6 +62,7 @@ public class UserProfileActivity extends AppCompatActivity {
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
+
             if (requestCode == GALLERY_OPEN_REQUEST_CODE) {
                 if (data != null && data.getData() != null) {
                     Uri pic = data.getData(); //Media URI (content://)
@@ -74,7 +78,9 @@ public class UserProfileActivity extends AppCompatActivity {
                 }
             }
             if (requestCode == CAMERA_REQUEST_CODE) {
-                profilePicture.setImageURI(Uri.fromFile(cameraFile));
+                byte[] returnValue = data.getByteArrayExtra("data");
+                Bitmap bmp = BitmapFactory.decodeByteArray(returnValue, 0, returnValue.length);
+                profilePicture.setImageBitmap(bmp);
 
             }
         }
@@ -95,7 +101,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private void openCamera() {
         if (model.checkPermissions(this, Manifest.permission.CAMERA)) {
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            Intent cameraIntent = new Intent(this,CustomCameraActivity.class);
             if (cameraIntent.resolveActivity(getPackageManager()) != null) {
                 // Create the File where the photo should go
                 cameraFile = null;
