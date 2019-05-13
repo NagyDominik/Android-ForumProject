@@ -7,8 +7,6 @@ import android.graphics.Bitmap;
 import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.BE.User;
 
-import java.util.Observable;
-
 public interface DataAccessLayerManager {
 
     /**
@@ -27,19 +25,11 @@ public interface DataAccessLayerManager {
     ObservableList<ForumPost> getAllForumPost();
 
     /**
-     * Returns the forum post with matching id from the database.
+     * Returns the post, with matching id, from the database.
      *
-     * @param id The id of the forum post.
-     * @return The forum post with matching id.
+     * @param id The id of the ForumPost.
      */
     ForumPost getForumPostById(String id);
-
-    /**
-     * Updates the forum post, with matching id, in the database.
-     *
-     * @param post The new data for the updateForumPost.
-     */
-    void updateForumPost(ForumPost post);
 
     /**
      * Deletes the forum post, with matching id from the database.
@@ -51,9 +41,16 @@ public interface DataAccessLayerManager {
     /**
      * Returns the user, with matching id, from the database.
      *
-     * @param id
+     * @param id The id of the user.
      */
     User getUserById(String id);
+
+    /**
+     * Returns the user, with matching id, from the database.
+     *
+     * @param bitmap The new profile picture.
+     */
+    void updateProfilePicture(Bitmap bitmap);
 
     /**
      * Returns an observable boolean which represents the state of the post loading.

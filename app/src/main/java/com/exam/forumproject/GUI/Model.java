@@ -116,10 +116,6 @@ class Model {
         return dalManager.isPictureLoadingProperty();
     }
 
-    ForumPost getForumPostById(String id) {
-        return dalManager.getForumPostById(id);
-    }
-
     ObservableList<ForumPost> getAllForumPost() {
         return this.forumPostsList;
     }
@@ -128,7 +124,11 @@ class Model {
         dalManager.createForumPost(post, bitmap);
     }
 
-    public User getUserById(String userID) {
+    User getUserById(String userID) {
         return dalManager.getUserById(userID);
+    }
+
+    void updateProfilePicture(Bitmap bitmap) {
+        dalManager.updateProfilePicture(bitmap);
     }
 }

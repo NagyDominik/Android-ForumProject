@@ -6,24 +6,21 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
-import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.exam.forumproject.BE.User;
 import com.exam.forumproject.R;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -67,7 +64,13 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void setUpListeners() {
-        btnSave.setOnClickListener(v -> finish());
+        btnSave.setOnClickListener(v -> {
+            Bitmap tempBitmap = null;
+            if (profilePicture.getDrawable() != null) {
+                tempBitmap = ((BitmapDrawable) profilePicture.getDrawable()).getBitmap();
+            }
+            model.updateProfilePicture(tempBitmap);
+        });
         btnOpenCamera.setOnClickListener(v -> openCamera());
         btnOpenGallery.setOnClickListener(v -> openGallery());
     }
@@ -110,7 +113,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private void openCamera() {
         if (model.checkPermissions(this, Manifest.permission.CAMERA)) {
-            Intent cameraIntent = new Intent(this,CustomCameraActivity.class);
+            Intent cameraIntent = new Intent(this, CustomCameraActivity.class);
             if (cameraIntent.resolveActivity(getPackageManager()) != null) {
                 // Create the File where the photo should go
                 cameraFile = null;
@@ -135,9 +138,9 @@ public class UserProfileActivity extends AppCompatActivity {
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES); //App only folder
         return File.createTempFile(
-                imageFileName,  // prefix
-                ".jpg",   // suffix
-                storageDir      // directory
+            imageFileName,   // prefix
+            ".jpg",   // suffix
+            storageDir      // directory
         );
 
     }

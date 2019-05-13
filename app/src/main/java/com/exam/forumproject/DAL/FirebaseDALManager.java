@@ -10,8 +10,13 @@ import android.util.Log;
 
 import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.BE.User;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
+
+import javax.annotation.Nullable;
 
 public class FirebaseDALManager implements DataAccessLayerManager {
     private static final String TAG = "ForumProject Firebase";
@@ -62,14 +67,10 @@ public class FirebaseDALManager implements DataAccessLayerManager {
     }
 
     @Override
-    public void updateForumPost(ForumPost post) {
-
-    }
-
-    @Override
     public User getUserById(String userID) {
-        this.db.collection("users").document(this.defaultUserID).get()
-            .addOnSuccessListener(documentSnapshot -> {
+        this.db.collection("users").document(this.defaultUserID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (documentSnapshot.exists()) {
                     Log.d(TAG, "User have found with id:" + documentSnapshot.getId());
                     defaultUser = documentSnapshot.toObject(User.class);
@@ -78,10 +79,15 @@ public class FirebaseDALManager implements DataAccessLayerManager {
                 } else {
                     Log.d(TAG, "No such document" + documentSnapshot.getId());
                 }
-            });
+            }
+        });
         return defaultUser;
     }
 
+    @Override
+    public void updateProfilePicture(Bitmap bitmap) {
+        this.fileManager.uploadImage(bitmap, "profile");
+    }
 
     @Override
     public ObservableBoolean isLoadingProperty() {
