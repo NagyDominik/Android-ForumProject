@@ -1,5 +1,6 @@
 package com.exam.forumproject.GUI;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +40,7 @@ public class CustomCameraActivity extends AppCompatActivity {
     //contains a query which is the
     String cameraId;
     CameraCaptureSession cameraCaptureSession;
+    private static int CAMERA_REQUEST_CODE = 5;
 
     int cameraFacing;
     @Override
@@ -61,6 +63,7 @@ public class CustomCameraActivity extends AppCompatActivity {
      * and set up a listener the texture view
      */
     public void setUp(){
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, CAMERA_REQUEST_CODE);
         cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         cameraFacing = CameraCharacteristics.LENS_FACING_FRONT;
 
@@ -254,7 +257,7 @@ public class CustomCameraActivity extends AppCompatActivity {
             bitmap = textureView.getBitmap();
             //Converting and compressing the bitmap into byte
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] bytes = stream.toByteArray();
             intent.putExtra("data", bytes);
 
