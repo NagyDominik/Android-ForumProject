@@ -6,14 +6,10 @@ import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.BE.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 
@@ -24,6 +20,7 @@ public class FirebaseDALManager implements DataAccessLayerManager {
     private FirebaseStorage storage;
     private FirebaseForumPostManager forumPostManager;
     private FirebaseFileManager fileManager;
+    private User defaultUser;
     private ObservableList<ForumPost> postList = new ObservableArrayList<>();
 
     FirebaseDALManager(Context context) {
@@ -33,7 +30,7 @@ public class FirebaseDALManager implements DataAccessLayerManager {
         this.forumPostManager = new FirebaseForumPostManager(this.db, this.fileManager, this.postList);
 
         setUpListeners();
-
+        defaultUser = getUserById("");
         Log.d(TAG, "Firestore initialized");
     }
 
@@ -71,32 +68,20 @@ public class FirebaseDALManager implements DataAccessLayerManager {
 
     @Override
     public User getUserById(String userID) {
-        User[] user = new User[1];
-        this.db.collection("users").document(this.defaultUserID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-
-                    if (document.exists()) {
-                        Log.d(TAG, "User have found with id:" + userID);
-                        user[0] = document.toObject(User.class);
-                        user[0].setId(document.getId());
-                    } else {
-                        Log.d(TAG, "No such document" + document.getId());
-                    }
+        this.db.collection("users").document(this.defaultUserID).get()
+            .addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    Log.d(TAG, "User have found with id:" + documentSnapshot.getId());
+                    defaultUser = documentSnapshot.toObject(User.class);
+                    defaultUser.setId(documentSnapshot.getId());
+                    fileManager.setUserProfilePic(defaultUser);
                 } else {
-                    Log.d(TAG, "Get failed with ", task.getException());
+                    Log.d(TAG, "No such document" + documentSnapshot.getId());
                 }
-            }
-        });
-        return user[0];
+            });
+        return defaultUser;
     }
 
-    @Override
-    public void updateProfilePicture() {
-
-    }
 
     @Override
     public ObservableBoolean isLoadingProperty() {

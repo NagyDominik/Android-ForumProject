@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.exam.forumproject.BE.ForumPost;
+import com.exam.forumproject.BE.User;
 import com.exam.forumproject.Utility.Utility;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -83,6 +84,18 @@ class FirebaseFileManager {
                     });
             }
         }
+    }
+
+    void setUserProfilePic(User user) {
+        StorageReference storageRef = storage.getReference();
+        storageRef.child("profile-pictures/" + user.getProfilePicId()).getDownloadUrl()
+            .addOnSuccessListener(uri -> {
+                user.setProfilePicUrl(uri.toString());
+                Log.d(TAG, "Picture loaded for: " + user);
+            })
+            .addOnFailureListener(error -> {
+                throw new IllegalArgumentException("No picture has been found with id: " + user.getProfilePicId());
+            });
     }
 
     ObservableBoolean isPictureLoadingProperty() {

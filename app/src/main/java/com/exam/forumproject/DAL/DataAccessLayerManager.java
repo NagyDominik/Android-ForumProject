@@ -56,11 +56,6 @@ public interface DataAccessLayerManager {
     User getUserById(String id);
 
     /**
-     * Updates the users profile picture.
-     */
-    void updateProfilePicture();
-
-    /**
      * Returns an observable boolean which represents the state of the post loading.
      *
      * @return True if the loading is in progress,

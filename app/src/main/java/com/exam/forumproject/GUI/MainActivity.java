@@ -49,6 +49,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        setUpRVAdapter();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -79,11 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 if (temp.get()) {
                     Log.d(TAG, "Loading");
                 } else {
-                    Log.d(TAG, "init RecyclerView.");
-                    adapter = new RecyclerViewAdapter(ctx, model.getAllForumPost());
-                    adapter.setItems(model.getAllForumPost());
-                    postListView.setAdapter(adapter);
-                    postListView.setLayoutManager(new LinearLayoutManager(ctx));
+                    setUpRVAdapter();
                 }
             }
         });
@@ -97,6 +99,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void setUpRVAdapter() {
+        Log.d(TAG, "init RecyclerView.");
+        adapter = new RecyclerViewAdapter(ctx, model.getAllForumPost());
+        adapter.setItems(model.getAllForumPost());
+        postListView.setAdapter(adapter);
+        postListView.setLayoutManager(new LinearLayoutManager(ctx));
     }
 
 }

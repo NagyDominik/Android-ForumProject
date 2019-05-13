@@ -90,7 +90,7 @@ public class CustomCameraActivity extends AppCompatActivity {
 
     }
     //endregion
-    
+
     private void setUpCamera() {
         try {
             for (String cameraId : cameraManager.getCameraIdList()) {
