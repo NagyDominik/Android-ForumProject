@@ -2,7 +2,6 @@ package com.exam.forumproject.GUI;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
 import android.graphics.Bitmap;
@@ -10,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.exam.forumproject.BE.ForumPost;
+import com.exam.forumproject.BE.User;
 import com.exam.forumproject.DAL.DALManagerFactory;
 import com.exam.forumproject.DAL.DataAccessLayerManager;
 import com.exam.forumproject.Utility.Utility;
@@ -128,7 +128,7 @@ class Model {
         dalManager.createForumPost(post, bitmap);
     }
 
-    public void getUserById(String userID){
-        dalManager.getUserById(userID);
+    public User getUserById(String userID) {
+        return dalManager.getUserById(userID);
     }
 }

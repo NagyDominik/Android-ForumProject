@@ -19,6 +19,7 @@ import com.google.firebase.storage.FirebaseStorage;
 
 public class FirebaseDALManager implements DataAccessLayerManager {
     private static final String TAG = "ForumProject Firebase";
+    private final String defaultUserID = "1ffKvrnr7lj4Gu0TzpBE"; //Temporary until no Auth
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private FirebaseForumPostManager forumPostManager;
@@ -70,8 +71,8 @@ public class FirebaseDALManager implements DataAccessLayerManager {
 
     @Override
     public User getUserById(String userID) {
-        User user = new User();
-        this.db.collection("users").document(userID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        User[] user = new User[1];
+        this.db.collection("users").document(this.defaultUserID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -79,7 +80,8 @@ public class FirebaseDALManager implements DataAccessLayerManager {
 
                     if (document.exists()) {
                         Log.d(TAG, "User have found with id:" + userID);
-                        user.setId(document.getId());
+                        user[0] = document.toObject(User.class);
+                        user[0].setId(document.getId());
                     } else {
                         Log.d(TAG, "No such document" + document.getId());
                     }
@@ -88,7 +90,7 @@ public class FirebaseDALManager implements DataAccessLayerManager {
                 }
             }
         });
-        return user;
+        return user[0];
     }
 
     @Override

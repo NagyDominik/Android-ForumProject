@@ -2,6 +2,7 @@ package com.exam.forumproject.GUI;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
 import android.os.Bundle;
@@ -9,7 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         ctx = this.getBaseContext();
         model = Model.getInstance(ctx);
@@ -41,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
 
         postListView = findViewById(R.id.recyclerView);
         loadingContents();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        adapter.notifyDataSetChanged();
     }
 
     @Override

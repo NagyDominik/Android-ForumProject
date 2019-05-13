@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -26,7 +24,6 @@ import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
-import android.view.View;
 
 import com.exam.forumproject.R;
 
@@ -35,46 +32,43 @@ import java.util.Collections;
 
 public class CustomCameraActivity extends AppCompatActivity {
 
-    public static String TAG = "CustomCameraActivity: ";
     TextureView textureView;
     FloatingActionButton btnCapturePhoto;
-    Model model;
-    private static int CAMERA_REQUEST_CODE = 4;
+    TextureView.SurfaceTextureListener surfaceTextureListener;
 
+    Model model;
     CameraDevice cameraDevice;
     CameraManager cameraManager;
-    TextureView.SurfaceTextureListener surfaceTextureListener;
-    private Size previewSize;
     String cameraId;
     CameraCaptureSession cameraCaptureSession;
+    HandlerThread backgroundThread;
+    Handler backgroundHandler;
 
-    int cameraFacing;
+    public static String TAG = "CustomCameraActivity: ";
+    private static int CAMERA_REQUEST_CODE = 4;
+    private Size previewSize;
+    private int cameraFacing;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_camera);
 
-        textureView =findViewById(R.id.cameraTexture);
-        findViewById(R.id.btn_take_photo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent resultIntent = new Intent();
+        textureView = findViewById(R.id.cameraTexture);
+        btnCapturePhoto = findViewById(R.id.btn_take_photo);
+        btnCapturePhoto.setOnClickListener(v -> {
+            Intent resultIntent = new Intent();
 
-
-
-                onTakePhotoButtonClicked(resultIntent);
-                setResult(Activity.RESULT_OK, resultIntent);
-                finish();
-            }
+            onTakePhotoButtonClicked(resultIntent);
+            setResult(Activity.RESULT_OK, resultIntent);
+            finish();
         });
         model = Model.getInstance(this);
         setUp();
-
     }
 
-    public void setUp(){
+    public void setUp() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, CAMERA_REQUEST_CODE);
-
         cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         cameraFacing = CameraCharacteristics.LENS_FACING_FRONT;
 
@@ -83,12 +77,10 @@ public class CustomCameraActivity extends AppCompatActivity {
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                 setUpCamera();
                 openCamera();
-
             }
 
             @Override
             public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
             }
 
             @Override
@@ -98,11 +90,11 @@ public class CustomCameraActivity extends AppCompatActivity {
 
             @Override
             public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
             }
         };
 
     }
+
     CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice cameraDevice) {
@@ -122,16 +114,15 @@ public class CustomCameraActivity extends AppCompatActivity {
             CustomCameraActivity.this.cameraDevice = null;
         }
     };
+
     private void setUpCamera() {
         try {
             for (String cameraId : cameraManager.getCameraIdList()) {
                 CameraCharacteristics cameraCharacteristics =
-                        cameraManager.getCameraCharacteristics(cameraId);
+                    cameraManager.getCameraCharacteristics(cameraId);
                 Log.d(TAG, "Looking for front camera, current cameraId=" + cameraId);
-                if (cameraCharacteristics.get(CameraCharacteristics.LENS_FACING) ==
-                        cameraFacing) {
-                    StreamConfigurationMap streamConfigurationMap = cameraCharacteristics.get(
-                            CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+                if (cameraCharacteristics.get(CameraCharacteristics.LENS_FACING) == cameraFacing) {
+                    StreamConfigurationMap streamConfigurationMap = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
                     previewSize = streamConfigurationMap.getOutputSizes(SurfaceTexture.class)[0];
                     this.cameraId = cameraId;
                 }
@@ -140,21 +131,17 @@ public class CustomCameraActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
     private void openCamera() {
         try {
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
-                    == PackageManager.PERMISSION_GRANTED) {
-
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 cameraManager.openCamera(cameraId, stateCallback, backgroundHandler);
                 Log.d(TAG, "Camera with id= " + cameraId + " open.");
-
             }
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
     }
-    HandlerThread backgroundThread;
-    Handler backgroundHandler;
 
     private void openBackgroundThread() {
         backgroundThread = new HandlerThread("camera_background_thread");
@@ -210,37 +197,33 @@ public class CustomCameraActivity extends AppCompatActivity {
             captureRequestBuilder.addTarget(previewSurface);
 
             cameraDevice.createCaptureSession(Collections.singletonList(previewSurface),
-                    new CameraCaptureSession.StateCallback() {
-
-                        @Override
-                        public void onConfigured(CameraCaptureSession cameraCaptureSession) {
-                            if (cameraDevice == null) {
-                                return;
-                            }
-
-                            try {
-                                CaptureRequest captureRequest = captureRequestBuilder.build();
-                                CustomCameraActivity.this.cameraCaptureSession = cameraCaptureSession;
-                                CustomCameraActivity.this.cameraCaptureSession.setRepeatingRequest(captureRequest,
-                                        null, backgroundHandler);
-                            } catch (CameraAccessException e) {
-                                e.printStackTrace();
-                            }
+                new CameraCaptureSession.StateCallback() {
+                    @Override
+                    public void onConfigured(CameraCaptureSession cameraCaptureSession) {
+                        if (cameraDevice == null) {
+                            return;
                         }
 
-                        @Override
-                        public void onConfigureFailed(CameraCaptureSession cameraCaptureSession) {
-
+                        try {
+                            CaptureRequest captureRequest = captureRequestBuilder.build();
+                            CustomCameraActivity.this.cameraCaptureSession = cameraCaptureSession;
+                            CustomCameraActivity.this.cameraCaptureSession.setRepeatingRequest(captureRequest, null, backgroundHandler);
+                        } catch (CameraAccessException e) {
+                            e.printStackTrace();
                         }
-                    }, backgroundHandler);
+                    }
+
+                    @Override
+                    public void onConfigureFailed(CameraCaptureSession cameraCaptureSession) { }
+                }, backgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
     }
+
     public void onTakePhotoButtonClicked(Intent intent) {
         Bitmap bitmap = null;
         try {
-
             bitmap = textureView.getBitmap();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
@@ -248,7 +231,6 @@ public class CustomCameraActivity extends AppCompatActivity {
             intent.putExtra("data", bytes);
 
             Log.d(TAG, "Photo taken");
-
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -6,7 +6,6 @@ public class User {
     private String regDate;
     private String profilePicUrl;
     private String profilePicId;
-    private String pictureUrl;
 
     public String getId() {
         return id;
@@ -46,13 +45,5 @@ public class User {
 
     public void setProfilePicId(String profilePicId) {
         this.profilePicId = profilePicId;
-    }
-
-    public String getPictureUrl() {
-        return pictureUrl;
-    }
-
-    public void setPictureUrl(String pictureUrl) {
-        this.pictureUrl = pictureUrl;
     }
 }

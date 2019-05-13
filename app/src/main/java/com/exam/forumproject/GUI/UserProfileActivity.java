@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.exam.forumproject.BE.User;
 import com.exam.forumproject.R;
 
 import java.io.ByteArrayInputStream;
@@ -41,6 +42,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST_CODE = 2;
     public static final String TAG = "UserProfileActivity";
     private File cameraFile;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,7 @@ public class UserProfileActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSaveProfile);
         profilePicture = findViewById(R.id.circleImageView);
         model = Model.getInstance(this);
+        currentUser = model.getUserById("id");
         setUpListeners();
     }
 
@@ -60,6 +63,7 @@ public class UserProfileActivity extends AppCompatActivity {
         btnOpenCamera.setOnClickListener(v -> openCamera());
         btnOpenGallery.setOnClickListener(v -> openGallery());
     }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
 
@@ -85,8 +89,6 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         }
     }
-
-
 
     private void openGallery() {
         if (model.checkPermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
