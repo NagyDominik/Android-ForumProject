@@ -40,6 +40,13 @@ class FirebaseForumPostManager {
         Log.d(TAG, "FirePost initialized");
     }
 
+    /**
+     * Creates a Map<String, Object> from the "post", uploads the given bitmap and sends it to the
+     * createForumDBEntry method for upload.
+     *
+     * @param post   Post data
+     * @param bitmap Image for the post
+     */
     void createPostWithImage(ForumPost post, Bitmap bitmap) {
         Map<String, Object> postDTO = new HashMap<>();
         postDTO.put("title", post.getTitle());
@@ -51,6 +58,12 @@ class FirebaseForumPostManager {
         createForumDBEntry(postDTO);
     }
 
+    /**
+     * Creates a Map<String, Object> from the "post" and sends it to the createForumDBEntry method
+     * for upload.
+     *
+     * @param post Post data
+     */
     void createTextPost(ForumPost post) {
         Map<String, Object> postDTO = new HashMap<>();
         postDTO.put("title", post.getTitle());
@@ -61,6 +74,11 @@ class FirebaseForumPostManager {
         createForumDBEntry(postDTO);
     }
 
+    /**
+     * Uploads the "post" object to Firebase.
+     *
+     * @param post Post data object
+     */
     private void createForumDBEntry(Object post) {
         upload = true;
         db.collection("forumposts").add(post)
@@ -68,6 +86,12 @@ class FirebaseForumPostManager {
             .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
     }
 
+    /**
+     * Returns all posts from firebase and requests their picture urls.
+     * While loading the isLoading Observable is set to true, and false when finished.
+     *
+     * @return A reference to the local postList ObservableList.
+     */
     ObservableList<ForumPost> getAllForumPost() {
         db.collection("forumposts").orderBy("postDate", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -97,6 +121,12 @@ class FirebaseForumPostManager {
         return postList;
     }
 
+    /**
+     * Returns the post, with matching id, from the database.
+     *
+     * @param id The id of the ForumPost.
+     * @return A single ForumPost with the matching id.
+     */
     ForumPost getForumPostById(String id) {
         final ForumPost[] ret = new ForumPost[1];
         db.collection("forumposts").document(id).get()
@@ -115,6 +145,11 @@ class FirebaseForumPostManager {
         return ret[0];
     }
 
+    /**
+     * Deletes the forum post, with matching id from the database.
+     *
+     * @param id The id of the forum post.
+     */
     void deleteForumPost(String id) {
         db.collection("forumposts").document(id).get()
             .addOnCompleteListener(task -> {

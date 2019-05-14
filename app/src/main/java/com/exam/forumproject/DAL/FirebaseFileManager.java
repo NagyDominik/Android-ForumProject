@@ -31,6 +31,13 @@ class FirebaseFileManager {
         this.postList = postList;
     }
 
+    /**
+     * Uploads {@code image} to firebase with a path that depends on the {@code location}.
+     *
+     * @param image    The bitmap of the image to be uploaded
+     * @param location The short form of the location. (forum or profile)
+     * @return The id of the uploaded image.
+     */
     String uploadImage(Bitmap image, String location) {
         String path;
         if (location.equals("forum")) {
@@ -61,6 +68,10 @@ class FirebaseFileManager {
         return uid;
     }
 
+    /**
+     * Sets the picture urls of each ForumPost in the local ObservableList reference supplied in the
+     * constructor.
+     */
     void setPictures() {
         isPictureLoading.set(true);
         StorageReference storageRef = storage.getReference();
@@ -86,6 +97,11 @@ class FirebaseFileManager {
         }
     }
 
+    /**
+     * Sets the profile picture url of the given user reference.
+     *
+     * @param user The user that requires profile picture
+     */
     void setUserProfilePic(User user) {
         StorageReference storageRef = storage.getReference();
         storageRef.child("profile-pictures/" + user.getProfilePicId()).getDownloadUrl()

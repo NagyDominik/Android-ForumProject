@@ -63,6 +63,17 @@ public class UserProfileActivity extends AppCompatActivity {
         setUpListeners();
     }
 
+    @Override
+    protected void onDestroy() {
+        if (cameraFile != null) {
+            cameraFile.delete();
+        }
+        super.onDestroy();
+    }
+
+    /**
+     * Sets up the onClickListeners for the buttons of the Activity
+     */
     private void setUpListeners() {
         btnSave.setOnClickListener(v -> {
             Bitmap tempBitmap = null;
@@ -100,6 +111,9 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Opens the Gallery app for choosing image from the device.
+     */
     private void openGallery() {
         if (model.checkPermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
             Intent pickIntent = new Intent(Intent.ACTION_PICK);
@@ -111,6 +125,9 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Opens the Camera app for image capture.
+     */
     private void openCamera() {
         if (model.checkPermissions(this, Manifest.permission.CAMERA)) {
             Intent cameraIntent = new Intent(this, CustomCameraActivity.class);
@@ -132,6 +149,12 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates the image file in the apps folder.
+     *
+     * @return The created file.
+     * @throws IOException When the file creation failed.
+     */
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());

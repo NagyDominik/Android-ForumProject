@@ -119,6 +119,11 @@ public class NewPostActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Sets the View elements when a new image is selected or captured.
+     *
+     * @param image The uri of the image to be set.
+     */
     private void onPictureSwitch(Uri image) {
         btnGallery.setVisibility(View.GONE);
         btnCamera.setVisibility(View.GONE);
@@ -138,6 +143,9 @@ public class NewPostActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Opens the Gallery app for choosing image from the device.
+     */
     private void openGallery() {
         if (model.checkPermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
             Intent pickIntent = new Intent(Intent.ACTION_PICK);
@@ -149,6 +157,9 @@ public class NewPostActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Opens the Camera app for image capture.
+     */
     private void openCamera() {
         if (model.checkPermissions(this, Manifest.permission.CAMERA)) {
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -170,6 +181,12 @@ public class NewPostActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates the image file in the apps folder.
+     *
+     * @return The created file.
+     * @throws IOException When the file creation failed.
+     */
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -180,9 +197,12 @@ public class NewPostActivity extends AppCompatActivity {
             ".jpg",   // suffix
             storageDir      // directory
         );
-
     }
 
+    /**
+     * Creates a ForumPost from the Activity data and calls the model's createForumPost function
+     * with it.
+     */
     private void post() {
         ForumPost newPost = new ForumPost();
         Bitmap tempBitmap = null;
