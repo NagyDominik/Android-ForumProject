@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.exam.forumproject.BE.ForumPost;
 import com.exam.forumproject.R;
@@ -206,15 +207,23 @@ public class NewPostActivity extends AppCompatActivity {
     private void post() {
         ForumPost newPost = new ForumPost();
         Bitmap tempBitmap = null;
-        if (etTitle.getText() != null) {
-            newPost.setTitle(etTitle.getText().toString());
+        if (etTitle.getText() != null && !etTitle.getText().toString().trim().equals("")) {
+            if ((etText.getText() != null && etText.getText().toString().trim().equals("")) && ((BitmapDrawable)imageView.getDrawable()).getBitmap() == null) {
+                Toast.makeText(this,"Post cannot be created without content.", Toast.LENGTH_LONG).show();
+            } else {
+                if (etTitle.getText() != null && !etTitle.getText().toString().trim().equals("")) {
+                    newPost.setTitle(etTitle.getText().toString());
+                }
+                if (etText.getText() != null && !etText.getText().toString().equals("")) {
+                    newPost.setDescription(etText.getText().toString());
+                } else if (imageView.getDrawable() != null) {
+                    tempBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+                }
+                model.createForumPost(newPost, tempBitmap);
+                finish();
+            }
+        } else {
+            Toast.makeText(this,"Post cannot be created without title.", Toast.LENGTH_LONG).show();
         }
-        if (etText.getText() != null && !etText.getText().toString().equals("")) {
-            newPost.setDescription(etText.getText().toString());
-        } else if (imageView.getDrawable() != null) {
-            tempBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-        }
-        model.createForumPost(newPost, tempBitmap);
-        finish();
     }
 }
