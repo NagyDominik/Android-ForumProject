@@ -216,7 +216,7 @@ public class NewPostActivity extends AppCompatActivity {
                 }
                 if (etText.getText() != null && !etText.getText().toString().equals("")) {
                     newPost.setDescription(etText.getText().toString());
-                } else if (imageView.getDrawable() != null) {
+                } else if (imageView.getDrawable() != null && ((BitmapDrawable)imageView.getDrawable()).getBitmap() == null) {
                     tempBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
                 }
                 model.createForumPost(newPost, tempBitmap);
