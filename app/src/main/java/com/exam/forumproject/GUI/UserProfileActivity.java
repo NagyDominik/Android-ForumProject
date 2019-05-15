@@ -2,6 +2,8 @@ package com.exam.forumproject.GUI;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -14,6 +16,7 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -82,7 +85,20 @@ public class UserProfileActivity extends AppCompatActivity {
             }
             model.updateProfilePicture(tempBitmap);
         });
-        btnOpenCamera.setOnClickListener(v -> openCamera());
+        btnOpenCamera.setOnClickListener(v ->  {
+            AlertDialog.Builder builder = new AlertDialog.Builder(UserProfileActivity.this);
+
+            builder.setCancelable(true);
+            builder.setTitle("The camera feature is under development");
+            builder.setMessage("Do you want to continue?");
+
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+            builder.setPositiveButton("OK", (dialog, which) -> openCamera());
+            builder.show();
+            }
+        );
+
         btnOpenGallery.setOnClickListener(v -> openGallery());
     }
 
