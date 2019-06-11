@@ -208,7 +208,7 @@ public class NewPostActivity extends AppCompatActivity {
         ForumPost newPost = new ForumPost();
         Bitmap tempBitmap = null;
         if (etTitle.getText() != null && !etTitle.getText().toString().trim().equals("")) {
-            if ((etText.getText() != null && etText.getText().toString().trim().equals("")) && ((BitmapDrawable)imageView.getDrawable()).getBitmap() == null) {
+            if ((etText.getText() != null && etText.getText().toString().trim().equals("")) && (imageView.getDrawable() == null)) {
                 Toast.makeText(this,"Post cannot be created without content.", Toast.LENGTH_LONG).show();
             } else {
                 if (etTitle.getText() != null && !etTitle.getText().toString().trim().equals("")) {
