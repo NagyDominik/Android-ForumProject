@@ -48,6 +48,7 @@ class FirebaseForumPostManager {
      * @param bitmap Image for the post
      */
     void createPostWithImage(ForumPost post, Bitmap bitmap) {
+        upload = true;
         Map<String, Object> postDTO = new HashMap<>();
         postDTO.put("title", post.getTitle());
         postDTO.put("postDate", dateFormater.format(new Date()));
@@ -80,7 +81,6 @@ class FirebaseForumPostManager {
      * @param post Post data object
      */
     private void createForumDBEntry(Object post) {
-        upload = true;
         db.collection("forumposts").add(post)
             .addOnSuccessListener(documentReference -> Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId()))
             .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
